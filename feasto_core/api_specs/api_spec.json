@@ -42,8 +42,16 @@
           "type": "string"
         },
           "id": {
-              "type": "string"
-          }
+              "type": "integer"
+          },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
       },
       "required": [
         "phone_no",
@@ -56,7 +64,7 @@
       "properties": {
 
           "id": {
-              "type": "string"
+              "type": "integer"
           },
         "name": {
           "type": "string"
@@ -74,6 +82,14 @@
             "UNAVAILABLE"
             ]
 
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
         }
       },
       "required": [
@@ -94,11 +110,19 @@
           "type": "integer"
         },
           "restaurant_id" : {
-               "type": "string"
+               "type": "integer"
           },
           "id": {
-              "type": "string"
-          }
+              "type": "integer"
+          },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
       },
       "required": [
         "name",
@@ -114,15 +138,23 @@
           "type": "string"
         },
           "id": {
-              "type": "string"
+              "type": "integer"
           },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
         "items": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
               "item_id": {
-                "type": "string"
+                "type": "integer"
               },
                 "order_quantity" : {
                     "type": "integer"
@@ -295,7 +327,7 @@
         "schema": {
           "type": "object",
           "properties": {
-            "data": {
+            "restaurants": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Restaurant"
@@ -324,7 +356,7 @@
           {
             "name": "restaurant_id",
             "in": "query",
-            "type": "string",
+            "type": "integer",
             "required": true
             }
 
@@ -337,7 +369,7 @@
               "type": "object",
               "properties": {
 
-                "data": {
+                "items": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/Item"
@@ -345,6 +377,213 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/add_item": {
+      "post": {
+        "operationId": "add_item",
+        "summary": "add item for a Person from restaurant",
+        "description": "add item api for a person from restaurant",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+           {
+            "name": "item_details",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+
+                },
+                "available_quantity": {
+                  "type": "integer"
+
+                },
+
+                "restaurant_id": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "name",
+                "available_quantity",
+                "restaurant_id"
+              ]
+            }
+      }
+
+        ],
+        "responses": {
+          "201": {
+            "description": "return item at added to restaurant",
+
+            "schema": {
+              "type": "object",
+              "properties": {
+
+                "item": {
+
+                    "$ref": "#/definitions/Item"
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/update_item": {
+      "post": {
+        "operationId": "update_item",
+        "summary": "update item  from restaurant",
+        "description": "update item api from restaurant",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+           {
+            "name": "item_details",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+
+                },
+                "available_quantity": {
+                  "type": "integer"
+
+                },
+
+                "restaurant_id": {
+                  "type": "integer"
+
+                },
+                 "item_id": {
+                  "type": "integer"
+
+                }
+              }
+
+            }
+      }
+
+        ],
+        "responses": {
+          "200": {
+            "description": "return updated item at the restaurant",
+
+            "schema": {
+              "type": "object",
+              "properties": {
+
+                "item": {
+
+                    "$ref": "#/definitions/Item"
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete_item": {
+      "post": {
+        "operationId": "delete_item",
+        "summary": "delete item  from restaurant",
+        "description": "delete item api from restaurant",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+           {
+            "name": "item_details",
+            "in": "body",
+
+            "schema": {
+              "type": "object",
+              "properties": {
+                "item_id": {
+                  "type": "integer"
+
+                },
+
+                "restaurant_id": {
+                  "type": "integer"
+
+                }
+              }
+
+            },
+            "required":true
+      }
+
+        ],
+        "responses": {
+          "200": {
+            "description": "item deleted from the restaurant"
+
+          }
+        }
+      }
+    },
+        "/delete_restaurant": {
+      "post": {
+        "operationId": "delete_restaurant",
+        "summary": "delete restaurant",
+        "description": "delete restaurant api",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+           {
+            "name": "item_details",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+
+                "restaurant_id": {
+                  "type": "integer"
+
+                }
+              }
+
+            }
+
+      }
+
+        ],
+        "responses": {
+          "200": {
+            "description": "deleted restaurant"
+
           }
         }
       }
@@ -506,10 +745,10 @@
                 "type": "object",
                 "properties": {
                   "item_id": {
-                    "type": "string"
+                    "type": "integer"
                   },
                   "restaurant_id": {
-                    "type": "string"
+                    "type": "integer"
                   },
                   "order_quantity": {
                     "type": "integer"
@@ -573,7 +812,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "data": {
+                "items": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/Item"
@@ -618,7 +857,7 @@
                   "type": "string"
 
                 },
-                "data": {
+                "restaurants": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/Restaurant"
@@ -669,7 +908,7 @@
                   "type": "string",
                   "example": "Search completed successfully"
                 },
-                "data": {
+                "restaurants": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/Restaurant"
@@ -716,7 +955,7 @@
                                 "type": "string",
                                 "example": "Search completed successfully"
                               },
-                              "data": {
+                              "restaurants": {
                                   "type": "array",
                                   "items": {
 
@@ -742,7 +981,7 @@
                 }
         },
         "/get_orders_for_user":{
-          "post": {
+          "get": {
                 "operationId": "get_orders_for_user",
                 "summary": "search all order related to a user",
                 "description": "search all order related to a user",

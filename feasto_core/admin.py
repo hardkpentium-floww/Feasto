@@ -4,7 +4,7 @@ from .models import Item, Order, Restaurant, User
 
 
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'user', 'location', 'status')  # Specify the fields to display
+    list_display = ('id', 'name', 'user', 'location', 'status','created_at','updated_at')  # Specify the fields to display
 
 # Register the model with the custom admin class
 admin.site.register(Restaurant, RestaurantAdmin)
