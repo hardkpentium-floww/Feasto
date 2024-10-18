@@ -9,11 +9,13 @@ REQUEST_BODY_JSON = """
 
 RESPONSE_201_JSON = """
 {
-    "access_token": "string",
-    "expires_in": 1,
-    "token_type": "string",
-    "scope": "string",
-    "refresh_token": "string"
+    "response": {
+        "access_token": "string",
+        "expires_in": 1,
+        "token_type": "string",
+        "refresh_token": "string",
+        "scope": "string"
+    }
 }
 """
 

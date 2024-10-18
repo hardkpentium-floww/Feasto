@@ -1,9 +1,13 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django_swagger_utils.drf_server.utils.decorator.interface_decorator \
     import validate_decorator
 from .validator_class import ValidatorClass
+from ...interactors.add_item_interactor import AddItemInteractor
 from ...models import Restaurant
 from ...models import Item
+from ...presenters.presenter_implementation import PresenterImplementation
+from ...storages.storage_implementation import StorageImplementation
+
 
 @validate_decorator(validator_class=ValidatorClass)
 def api_wrapper(*args, **kwargs):
@@ -17,25 +21,9 @@ def api_wrapper(*args, **kwargs):
     interactor = AddItemInteractor(storage=storage)
 
     # rest = Restaurant.objects.get(id = restaurant_id)
-    rest = interactor.get_restaurant(id = restaurant_id)
-    check = rest.user_id == str(user_id)
+    item_dict = interactor.add_item(restaurant_id = restaurant_id, name= name, available_quantity=available_quantity, presenter=presenter)
+    # check = rest.user_id == str(user_id)
 
-    if check:
-        item = Item.objects.create(
-            name= name,
-            available_quantity= available_quantity,
-            restaurant_id= restaurant_id,
-        )
 
-        response_data = {
-            "item": {
-                "name": item.name,
-                "available_quantity":item.available_quantity,
-                "restaurant_id": item.restaurant_id,
-                "id": item.id
-            }
-        }
+    return JsonResponse(data=item_dict, status=201)
 
-        return JsonResponse(data=response_data, status=200)
-
-    return JsonResponse(data={"message": f'Invalid request,restaurant_id: {restaurant_id} is does not exists'}, status=400)

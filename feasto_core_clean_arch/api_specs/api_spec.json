@@ -42,7 +42,7 @@
           "type": "string"
         },
           "id": {
-              "type": "integer"
+              "type": "string"
           },
         "created_at": {
           "type": "string",
@@ -134,8 +134,8 @@
     "Order": {
       "type": "object",
       "properties": {
-        "user_id": {
-          "type": "string"
+        "user": {
+          "$ref": "#/definitions/User"
         },
           "id": {
               "type": "integer"
@@ -147,29 +147,34 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
+        }
+
+      },
+      "required": [
+        "user",
+        "id"
+      ]
+    },
+    "OrderItem": {
+      "type": "object",
+      "properties": {
+        "id" : {
+            "type": "integer"
         },
-        "items": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "item_id": {
-                "type": "integer"
-              },
-                "order_quantity" : {
-                    "type": "integer"
-                }
-            },
-            "required": [
-              "item_id",
-              "order_quantity"
-            ]
-          }
+        "item": {
+          "$ref": "#/definitions/Item"
+        },
+        "order": {
+          "$ref": "#/definitions/Order"
+        },
+        "quantity": {
+          "type": "integer"
         }
       },
       "required": [
-        "user_id",
-        "items",
+        "item",
+        "order",
+        "quantity",
         "id"
       ]
     }
@@ -229,29 +234,36 @@
             "schema": {
               "type": "object",
               "properties": {
-                "access_token": {
-                  "type": "string"
-                },
-                "expires_in": {
-                  "type": "integer"
-                },
-                "token_type": {
-                  "type": "string"
-                },
-                "scope": {
-                  "type": "string"
-                },
-                "refresh_token": {
-                  "type": "string"
+                "response": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "expires_in": {
+                      "type": "integer"
+                    },
+                    "token_type": {
+                      "type": "string"
+                    },
+                    "refresh_token": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                  "access_token",
+                  "expires_in",
+                  "token_type",
+                  "refresh_token",
+                  "scope"
+                ]
                 }
-              },
-              "required": [
-                "access_token",
-                "expires_in",
-                "token_type",
-                "refresh_token",
-                "scope"
-              ]
+
+              }
+
             }
           }
         }

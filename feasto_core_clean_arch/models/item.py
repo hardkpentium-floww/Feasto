@@ -11,6 +11,7 @@ class Item(models.Model):
                              related_name="restaurant" )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    id = models.AutoField(primary_key=True)
 
     def __str__(self):
         return self.name

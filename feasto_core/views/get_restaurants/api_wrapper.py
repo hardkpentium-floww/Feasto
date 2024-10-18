@@ -10,15 +10,11 @@ def api_wrapper(*args, **kwargs):
     query = kwargs.get('query_params', {})
 
     # Extract parameters with defaults
-    status = query.get('status', None)
-    location = query.get('location', None)
-    offset = query.get('offset', 0)
-    limit = query.get('limit', 10)
+    status = query.get('status')
+    location = query.get('location')
+    offset = query.get('offset')
+    limit = query.get('limit')
 
-    # Validate limit and offset
-
-    offset = int(offset)
-    limit = int(limit)
 
     # Fetch restaurants
     fetched_restaurants = Restaurant.objects.all()

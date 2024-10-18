@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-from feasto_core.models.user import User
+from feasto_core_clean_arch.models.user import User
 
 
 from django.db import models
@@ -12,7 +12,7 @@ class Restaurant(models.Model):
         ('UNAVAILABLE', 'UNAVAILABLE')
     ]
     name = models.CharField(max_length=50)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="restaurants")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="restaurant_owner")
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default="AVAILABLE")
     location = models.CharField(max_length=250)
     created_at = models.DateTimeField(auto_now_add=True)

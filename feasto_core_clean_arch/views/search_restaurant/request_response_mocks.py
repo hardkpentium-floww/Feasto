@@ -11,7 +11,7 @@ RESPONSE_201_JSON = """
             "user": {
                 "phone_no": "string",
                 "name": "string",
-                "id": 1,
+                "id": "string",
                 "created_at": "2099-12-31 00:00:00",
                 "updated_at": "2099-12-31 00:00:00"
             },

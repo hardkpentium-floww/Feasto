@@ -1,8 +1,13 @@
 from django_swagger_utils.drf_server.utils.decorator.interface_decorator \
     import validate_decorator
 from .validator_class import ValidatorClass
+from ...interactors.get_restaurants_interactor import GetRestaurantsInteractor
 from ...models import Restaurant
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+
+from ...presenters.presenter_implementation import PresenterImplementation
+from ...storages.storage_implementation import StorageImplementation
+
 
 @validate_decorator(validator_class=ValidatorClass)
 def api_wrapper(*args, **kwargs):
@@ -15,28 +20,11 @@ def api_wrapper(*args, **kwargs):
     offset = query.get('offset')
     limit = query.get('limit')
 
-    # Validate limit and offset
+    storage = StorageImplementation()
+    presenter = PresenterImplementation()
+    interactor = GetRestaurantsInteractor(storage=storage)
 
-    offset = int(offset)
-    limit = int(limit)
 
-    # Fetch restaurants
-    fetched_restaurants = Restaurant.objects.all()
+    restaurants_response = interactor.get_restaurants(status= status, location=location, offset=offset, limit= limit, presenter= presenter)
 
-    if status:
-        fetched_restaurants = fetched_restaurants.filter(status=status.lower())
-
-    if location:
-        fetched_restaurants = fetched_restaurants.filter(location=location)
-
-    # Apply offset and limit
-    fetched_restaurants = fetched_restaurants[offset:offset + limit]
-
-    # Handle empty result case
-    if not fetched_restaurants:
-        return JsonResponse({'message': 'No restaurants found'}, status=404)
-
-    # Serialize restaurants (you will need a serializer or manual serialization)
-    restaurants_data = [{'id': rest.id, 'name': rest.name, 'location': rest.location, 'status': rest.status.upper()} for rest in fetched_restaurants]
-
-    return JsonResponse({'restaurants': restaurants_data}, status=200)
+    return JsonResponse(data=restaurants_response, status=201)

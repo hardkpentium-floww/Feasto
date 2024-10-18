@@ -2,47 +2,43 @@ from django_swagger_utils.drf_server.utils.decorator.interface_decorator \
     import validate_decorator
 from .validator_class import ValidatorClass
 
+from django.http import JsonResponse
+
+from ...interactors.add_restaurant_interactor import AddRestaurantInteractor
+from ...presenters.presenter_implementation import PresenterImplementation
+from ...storages.storage_implementation import StorageImplementation
+
 
 @validate_decorator(validator_class=ValidatorClass)
 def api_wrapper(*args, **kwargs):
-    # ---------MOCK IMPLEMENTATION---------
+    rest_name = kwargs['request_data']['name']
 
-    try:
-        from feasto_core.views.add_restaurant.request_response_mocks \
-            import REQUEST_BODY_JSON
-        body = REQUEST_BODY_JSON
-    except ImportError:
-        body = {}
+    rest_status = kwargs['request_data']['status']
+    rest_location = kwargs['request_data']['location']
+    # return JsonResponse({"kwargs":kwargs}, 200)
+    user_id = kwargs['user'].user_id
 
-    test_case = {
-        "path_params": {},
-        "query_params": {},
-        "header_params": {},
-        "body": body,
-        "securities": [{'oauth': ['read']}]
-    }
+    storage = StorageImplementation()
+    presenter = PresenterImplementation()
+    interactor = AddRestaurantInteractor(storage=storage)
 
-    from django_swagger_utils.drf_server.utils.server_gen.mock_response \
-        import mock_response
-    try:
-        response = ''
-        status_code = 200
-        if '200' in ['200', '400']:
-            from feasto_core.views.add_restaurant.request_response_mocks \
-                import RESPONSE_200_JSON
-            response = RESPONSE_200_JSON
-            status_code = 200
-        elif '201' in ['200', '400']:
-            from feasto_core.views.add_restaurant.request_response_mocks \
-                import RESPONSE_201_JSON
-            response = RESPONSE_201_JSON
-            status_code = 201
-    except ImportError:
-        response = ''
-        status_code = 200
-    response_tuple = mock_response(
-        app_name="feasto_core", test_case=test_case,
-        operation_name="add_restaurant",
-        kwargs=kwargs, default_response_body=response,
-        group_name="", status_code=status_code)
-    return response_tuple
+    restaurant_response = interactor.add_restaurant(presenter=presenter, name=rest_name, location=rest_location, status=rest_status, user_id=user_id)
+
+    return JsonResponse(data=restaurant_response, status=201)
+
+    # restaurant = Restaurant.objects.create(
+    #     name=rest_name,
+    #     user=user,
+    #     location=rest_location,
+    #     status=rest_status.lower()
+    # )
+    #
+    # restaurant_data = {
+    #     "id": restaurant.id,
+    #     "name": restaurant.name,
+    #     "owner": restaurant.user.name,
+    #     "location": restaurant.location,
+    #     "status": restaurant.status.upper()
+    # }
+    #
+    # return JsonResponse(data=restaurant_data, status=201)

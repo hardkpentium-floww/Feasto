@@ -7,7 +7,7 @@ from typing import Optional, List
 
 @dataclass()
 class UserDTO:
-    id: int
+    id: str
     name: str
     phone_no: str
 
@@ -16,7 +16,7 @@ class ItemDTO:
     name: str
     id: int
     available_quantity: int
-    restaurant_id: str
+    restaurant_id: int
 
 
 @dataclass()
@@ -31,24 +31,28 @@ class RestaurantDTO:
 class OrderItemDTO:
     item_id: int
     order_quantity: int
-    restaurant_id: int
+    order_id: int
 
 
 
 @dataclass()
-class OrderDto:
+class OrderDTO:
     id: int
     user_id: int
     items: List[OrderItemDTO]
-    location: str
-    status: str
 
-
+@dataclass()
+class LoginDTO:
+    access_token: str
+    refresh_token: str
+    expires_in: int
+    scope: str
+    token_type: str
 
 class StorageInterface:
 
     @abstractmethod
-    def get_user(self, user_id: int,) -> UserDTO:
+    def get_user(self, user_id: int) -> UserDTO:
         pass
 
     @abstractmethod
@@ -67,23 +71,23 @@ class StorageInterface:
         pass
 
     @abstractmethod
-    def update_item(self, item_id: int,
-                  name: str= None, available_quantity:int= None) -> ItemDTO:
+    def update_item(self, item_id: int, restaurant_id: int, user_id: int,
+                    name: str = None, available_quantity: int = None) -> ItemDTO:
         pass
 
     @abstractmethod
     def update_restaurant(self,
-                    name: str, status: str ) -> RestaurantDTO:
+                    name: str, status: str , user_id: str, rest_id: int) -> RestaurantDTO:
         pass
 
     @abstractmethod
     def delete_restaurant(self,
-                          restaurant_id: int):
+                          restaurant_id: int, user_id: int):
         pass
 
     @abstractmethod
     def delete_item(self, item_id:int,
-                          restaurant_id: int):
+                          restaurant_id: int, user_id: str):
         pass
 
     @abstractmethod
@@ -92,7 +96,7 @@ class StorageInterface:
         pass
 
     @abstractmethod
-    def get_restaurants(self) -> List[RestaurantDTO]:
+    def get_restaurants(self, status: str, location: str, offset: int, limit: int) -> List[RestaurantDTO]:
         pass
 
     @abstractmethod
@@ -101,7 +105,25 @@ class StorageInterface:
         pass
 
     @abstractmethod
-    def make_order(self, order_items: List[OrderItemDTO],
-                   restaurant_id: int) -> OrderDto:
+    def make_order(self, items_data: List[dict], user_id: int) -> OrderDTO:
         pass
 
+    @abstractmethod
+    def get_user_id(self) -> int:
+        pass
+
+    @abstractmethod
+    def create_order_item(self,  item_id: int, order_quantity: int, restaurant_id: int):
+        pass
+
+    @abstractmethod
+    def login(self, user_id: int, phone_no: str) -> LoginDTO:
+        pass
+
+    @abstractmethod
+    def logout(self, user_id: int):
+        pass
+
+    @abstractmethod
+    def get_orders_for_user(self, user_id: str) -> List[OrderDTO]:
+        pass

@@ -16,16 +16,16 @@ REQUEST_BODY_JSON = """
 RESPONSE_200_JSON = """
 {
     "order": {
-        "user_id": "string",
+        "user": {
+            "phone_no": "string",
+            "name": "string",
+            "id": "string",
+            "created_at": "2099-12-31 00:00:00",
+            "updated_at": "2099-12-31 00:00:00"
+        },
         "id": 1,
         "created_at": "2099-12-31 00:00:00",
-        "updated_at": "2099-12-31 00:00:00",
-        "items": [
-            {
-                "item_id": 1,
-                "order_quantity": 1
-            }
-        ]
+        "updated_at": "2099-12-31 00:00:00"
     }
 }
 """

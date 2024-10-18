@@ -24,7 +24,7 @@ from django_swagger_utils.drf_server.utils.general.import_app_settings import \
 THIRD_PARTY_APPS = []
 APPS = [
     "feasto_core",
-    "feasto_core_clean_arch"
+    "feasto_core_clean_arch",
 ]
 
 INSTALLED_APPS += THIRD_PARTY_APPS
