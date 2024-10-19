@@ -1,1 +1,0 @@
-export SENTRY_ENV_BRANCH=${CI_BRANCH//-/_}

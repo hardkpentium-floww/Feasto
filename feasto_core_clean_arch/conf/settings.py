@@ -1,1 +1,0 @@
-# write your feasto_core_clean_arch settings
