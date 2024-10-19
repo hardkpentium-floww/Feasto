@@ -24,7 +24,7 @@ def api_wrapper(*args, **kwargs):
 
     restaurant_response = interactor.add_restaurant(presenter=presenter, name=rest_name, location=rest_location, status=rest_status, user_id=user_id)
 
-    return JsonResponse(data=restaurant_response, status=201)
+    return restaurant_response
 
     # restaurant = Restaurant.objects.create(
     #     name=rest_name,

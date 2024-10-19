@@ -21,9 +21,9 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = LoginInteractor(storage=storage)
 
-    login_response = interactor.login(user_id=user_id, presenter=presenter, phone_no=phone_no)
+    return interactor.login(user_id=user_id, presenter=presenter, phone_no=phone_no)
 
-    return JsonResponse(data = login_response, status=200)
+    # return JsonResponse(data = login_response, status=200)
 
     # print(phone_no)
     #

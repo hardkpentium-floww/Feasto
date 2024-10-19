@@ -25,6 +25,6 @@ def api_wrapper(*args, **kwargs):
     interactor = GetRestaurantsInteractor(storage=storage)
 
 
-    restaurants_response = interactor.get_restaurants(status= status, location=location, offset=offset, limit= limit, presenter= presenter)
+    return interactor.get_restaurants(status= status, location=location, offset=offset, limit= limit, presenter= presenter)
 
-    return JsonResponse(data=restaurants_response, status=201)
+    # return JsonResponse(data=restaurants_response, status=201)

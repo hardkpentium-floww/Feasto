@@ -23,9 +23,9 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = UpdateItemInteractor(storage=storage)
 
-    updated_item = interactor.update_item(user_id=user_id, presenter=presenter, restaurant_id=restaurant_id, item_id=item_id, name=name, available_quantity=available_quantity)
+    return interactor.update_item(user_id=user_id, presenter=presenter, restaurant_id=restaurant_id, item_id=item_id, name=name, available_quantity=available_quantity)
 
-    return JsonResponse(data=updated_item, status=200)
+    # return JsonResponse(data=updated_item, status=200)
 
     # check = Restaurant.objects.get(id=restaurant_id).user_id ==str(user_id)
     #

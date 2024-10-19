@@ -16,7 +16,7 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = GetItemsInteractor(storage=storage)
     # Fetch all items for the restaurant
-    items_response = interactor.get_items(restaurant_id=rest_id, presenter=presenter)
+    return interactor.get_items(restaurant_id=rest_id, presenter=presenter)
 
 
-    return JsonResponse(data=items_response, status=200)
+    # return JsonResponse(data=items_response, status=200)

@@ -17,9 +17,9 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = GetOrdersForUserInteractor(storage=storage)
 
-    orders_response = interactor.get_orders_for_user(user_id=user_id, presenter=presenter)
+    return interactor.get_orders_for_user(user_id=user_id, presenter=presenter)
 
-    return JsonResponse(data=orders_response, status=201)
+    # return JsonResponse(data=orders_response, status=201)
 
 
 

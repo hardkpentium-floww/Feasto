@@ -1,11 +1,54 @@
 from typing import List
 
+from feasto_core_clean_arch.constants.exception_messages import RESTAURANT_NOT_FOUND, INVALID_USER, ITEM_NOT_FOUND, \
+    INVALID_OWNER
 from feasto_core_clean_arch.interactors.presenter_interfaces.presenter_interface import PresenterInterface
 from feasto_core_clean_arch.interactors.storage_interfaces.storage_interface import ItemDTO, RestaurantDTO, OrderDTO, \
     UserDTO, OrderItemDTO, LoginDTO
+from django.http import JsonResponse, HttpResponse
 
 
 class PresenterImplementation(PresenterInterface):
+
+    def error_response_for_invalid_user(self):
+        status, response = INVALID_USER
+        data = {
+            "status_code" : 401,
+            "res_status": status,
+            "response": response
+        }
+
+        return JsonResponse(data=data, status=status)
+
+    def error_response_for_restaurant_not_found(self):
+        status, response = RESTAURANT_NOT_FOUND
+        data = {
+            "status_code": 401,
+            "res_status": status,
+            "response": response
+        }
+
+        return JsonResponse(data=data, status=status)
+
+    def error_response_for_item_not_found(self):
+        status, response = ITEM_NOT_FOUND
+        data = {
+            "status_code": 401,
+            "res_status": status,
+            "response": response
+        }
+
+        return JsonResponse(data=data, status=status)
+
+    def error_response_for_invalid_restaurant_owner(self):
+        status, response = INVALID_OWNER
+        data = {
+            "status_code": 401,
+            "res_status": status,
+            "response": response
+        }
+
+        return JsonResponse(data=data, status=status)
 
     def get_response_for_get_items(self, items_dto: List[ItemDTO]):
         response_items = []
@@ -13,9 +56,11 @@ class PresenterImplementation(PresenterInterface):
             response_item = self._get_item_dict(item)
             response_items.append(response_item)
 
-        return {
+        data = {
             "items" : response_items
         }
+
+        return JsonResponse(data=data, status=200)
 
     def get_response_for_get_restaurants(self, restaurants_dto: List[RestaurantDTO]):
         response_rest = []
@@ -23,14 +68,18 @@ class PresenterImplementation(PresenterInterface):
             rest_dict = self._get_restaurant_dict(rest_dto)
             response_rest.append(rest_dict)
 
-        return {
+        data= {
             "restaurants" : response_rest
         }
 
+        return JsonResponse(data=data, status=200)
+
     def get_response_for_add_item(self, item_dto: ItemDTO):
-        return {
+        data= {
             "item": self._get_item_dict(item_dto)
         }
+
+        return JsonResponse(data=data, status=200)
 
     def get_response_for_get_orders_for_user(self,orders_dto: List[OrderDTO]):
         order_response = []
@@ -38,28 +87,39 @@ class PresenterImplementation(PresenterInterface):
             order_dict = self._get_order_dict(order_dto)
             order_response.append(order_dict)
 
-        return {
+        data= {
             "orders" : order_response
         }
 
+        return JsonResponse(data=data, status=200)
+
     def get_response_for_add_restaurant(self, restaurant_dto: RestaurantDTO):
-        return {
+        data = {
             "restaurant": self._get_restaurant_dict(restaurant_dto)
         }
 
+        return JsonResponse(data=data, status=200)
+
     def get_response_for_make_order(self, order_dto:OrderDTO):
-        return {
+        data = {
             "order": self._get_order_dict(order_dto)
         }
+
+        return JsonResponse(data=data, status=200)
+
     def get_response_for_update_item(self, item_dto: ItemDTO):
-        return {
+        data = {
             "item": self._get_item_dict(item_dto)
         }
 
+        return JsonResponse(data=data, status=200)
+
     def get_response_for_update_restaurant(self, restaurant_dto: RestaurantDTO):
-        return {
+        data = {
             "restaurant": self._get_restaurant_dict(restaurant_dto)
         }
+
+        return JsonResponse(data=data, status=200)
 
     def get_response_for_get_orders_for_user(self, orders_dto: List[OrderDTO]):
         response_orders = []
@@ -67,14 +127,18 @@ class PresenterImplementation(PresenterInterface):
             order_dict = self._get_order_dict(order_dto)
             response_orders.append(order_dict)
 
-        return {
+        data= {
             "orders" : response_orders
         }
 
+        return JsonResponse(data=data, status=200)
+
     def get_response_for_login(self, login_dto: LoginDTO):
-        return {
+        data = {
             "response" : self._get_login_dict(login_dto)
         }
+
+        return JsonResponse(data=data, status=200)
     def _get_item_dict(self, item_dto: ItemDTO):
         return {
             "name": item_dto.name,

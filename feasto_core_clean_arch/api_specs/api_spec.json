@@ -216,7 +216,115 @@
       }
 
   },
-  "responses": {},
+  "responses": {
+     "401": {
+            "description": "Invalid User",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status_code": {
+                    "type": "integer"
+                },
+                "res_status": {
+                  "type": "string",
+                  "enum": [
+                    "INVALID_USER"
+                    ]
+                },
+                "response":{
+                  "type": "string"
+                }
+
+              },
+               "required": [
+                  "status_code",
+                  "res_status",
+                  "response"
+                ]
+
+            }
+          },
+    "404": {
+            "description": "Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status_code": {
+                    "type": "integer"
+                },
+                "res_status": {
+                  "type": "string",
+                   "enum": [
+                    "RESTAURANT_NOT_FOUND",
+                    "ITEM_NOT_FOUND"
+                  ]
+                },
+                "response":{
+                  "type": "string"
+                }
+
+              },
+               "required": [
+                  "status_code",
+                  "res_status",
+                  "response"
+                ]
+
+            }
+          },
+    "UserNotFound": {
+            "description": "User Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                    "type": "string"
+                }
+
+              }
+
+            }
+          },
+    "RestaurantNotFound": {
+      "description": "Restaurant Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                    "type": "string"
+                }
+
+              }
+
+            }
+    },
+    "ItemNotFound" : {
+        "description": "Item Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                    "type": "string"
+                }
+
+              }
+
+            }
+    },
+    "InvalidUser" :{
+       "description": "Invalid User",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                    "type": "string"
+                }
+
+              }
+
+            }
+    }
+  },
   "paths": {
     "/login": {
       "post": {
@@ -265,6 +373,9 @@
               }
 
             }
+          },
+          "401": {
+            "$ref" : "#/responses/401"
           }
         }
       }
@@ -347,7 +458,10 @@
             }
           }
         }
-      }
+      },
+       "404": {
+            "$ref" : "#/responses/404"
+          }
     }
   }
 }
@@ -389,6 +503,9 @@
                 }
               }
             }
+          },
+           "404": {
+            "$ref" : "#/responses/404"
           }
         }
       }
@@ -450,6 +567,9 @@
                 }
               }
             }
+          },
+           "404": {
+            "$ref" : "#/responses/404"
           }
         }
       }
@@ -512,6 +632,9 @@
                 }
               }
             }
+          },
+           "404": {
+            "$ref" : "#/responses/404"
           }
         }
       }
@@ -556,6 +679,10 @@
           "200": {
             "description": "item deleted from the restaurant"
 
+          },
+
+           "404": {
+            "$ref" : "#/responses/404"
           }
         }
       }
@@ -596,7 +723,11 @@
           "200": {
             "description": "deleted restaurant"
 
+          },
+           "404": {
+            "$ref" : "#/responses/404"
           }
+
         }
       }
     },
@@ -660,9 +791,6 @@
             }
           }
         }
-      },
-      "400": {
-        "description": "Restaurant Can't be Created"
       }
     }
   }
@@ -723,9 +851,9 @@
           }
         }
       },
-      "400": {
-        "description": "Restaurant Can't be Updated"
-      }
+       "404": {
+            "$ref" : "#/responses/404"
+          }
     }
   }
 },
@@ -792,8 +920,8 @@
               }
             }
           },
-          "400": {
-            "description": "Order Failed"
+            "404": {
+            "$ref" : "#/responses/404"
           }
         }
       }
@@ -1026,12 +1154,9 @@
                         }
                       },
 
-
-                    "400": {
-                        "description": "Search Failed"
-
+                 "404": {
+                          "$ref" : "#/responses/404"
                         }
-
 
 
                     }

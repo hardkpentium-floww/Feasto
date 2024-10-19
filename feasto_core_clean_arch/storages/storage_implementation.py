@@ -11,6 +11,7 @@ from oauthlib.common import generate_token
 from feasto_core_clean_arch.models import OrderItem, Order
 from feasto_core_clean_arch.interactors.storage_interfaces.storage_interface import StorageInterface, ItemDTO, \
     RestaurantDTO, UserDTO, OrderItemDTO, OrderDTO, LoginDTO
+from ..exceptions.custom_exceptions import InvalidRestaurantOwnerId, InvalidRestaurantId, InvalidItemId, InvalidUserId
 from ..models import User,Item
 from typing import List
 
@@ -18,7 +19,7 @@ from ..models import Restaurant
 
 
 class StorageImplementation(StorageInterface):
-    def get_user(self, user_id: int) -> UserDTO:
+    def get_user(self, user_id: str) -> UserDTO:
         user = User.objects.get(id=user_id)
         user_dto = UserDTO(
             id= user.id,
@@ -27,8 +28,27 @@ class StorageImplementation(StorageInterface):
         )
         return user_dto
 
+    def validate_item_id(self, item_id:int):
+        item = Item.objects.filter(id=item_id).exists()
+        if not item:
+            raise InvalidItemId
 
-    def get_item(self, item_id: int) -> ItemDTO:
+    def validate_restaurant_owner(self,restaurant_id:int, user_id:str):
+        rest = Restaurant.objects.get(id=restaurant_id)
+        if rest.user_id != user_id:
+            raise InvalidRestaurantOwnerId
+    def validate_user_id(self, user_id:str):
+        user = User.objects.filter(id=user_id).exists()
+        if not user:
+            raise InvalidUserId
+
+
+    def validate_restaurant_id(self, restaurant_id:int):
+        rest = Restaurant.objects.filter(id=restaurant_id).exists()
+        if not rest:
+            raise InvalidRestaurantId
+
+    def get_item(self, item_id: int, restaurant_id: int) -> ItemDTO:
         item = Item.objects.get(id=item_id)
 
         item_dto = ItemDTO(
@@ -57,7 +77,7 @@ class StorageImplementation(StorageInterface):
         return item_dto
 
     def add_restaurant(self,
-                 name: str, user_id: int, status: str, location: str) -> RestaurantDTO:
+                 name: str, user_id: str, status: str, location: str) -> RestaurantDTO:
         user = User.objects.get(id = user_id)
         restaurant = Restaurant.objects.create(
             name=name,
@@ -129,6 +149,9 @@ class StorageImplementation(StorageInterface):
         if rest.user_id == user_id:
             rest.delete()
 
+        return
+
+
 
     def delete_item(self, item_id:int,
                           restaurant_id: int, user_id: str):
@@ -180,6 +203,7 @@ class StorageImplementation(StorageInterface):
             rest_list.append(rest_dto)
 
         return rest_list
+
 
     def get_restaurant(self,
                         restaurant_id: int) -> RestaurantDTO:

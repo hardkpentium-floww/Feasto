@@ -67,7 +67,7 @@ class StorageInterface:
 
     @abstractmethod
     def add_restaurant(self,
-                 name: str, user_id: int, status: str, location: str) -> ItemDTO:
+                 name: str, user_id: str, status: str, location: str) -> ItemDTO:
         pass
 
     @abstractmethod
@@ -109,7 +109,7 @@ class StorageInterface:
         pass
 
     @abstractmethod
-    def get_user_id(self) -> int:
+    def get_user_id(self) -> str:
         pass
 
     @abstractmethod
@@ -126,4 +126,20 @@ class StorageInterface:
 
     @abstractmethod
     def get_orders_for_user(self, user_id: str) -> List[OrderDTO]:
+        pass
+
+    @abstractmethod
+    def validate_restaurant_owner(self, restaurant_id:int, user_id:str):
+        pass
+
+    @abstractmethod
+    def validate_restaurant_id(self, restaurant_id:int):
+        pass
+
+    @abstractmethod
+    def validate_item_id(self, item_id:int):
+        pass
+
+    @abstractmethod
+    def validate_user_id(self, user_id:str):
         pass

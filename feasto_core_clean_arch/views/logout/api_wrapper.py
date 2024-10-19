@@ -18,9 +18,9 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = LogoutInteractor(storage=storage)
 
-    logout_response = interactor.logout(user_id=user_id, presenter=presenter)
+    return interactor.logout(user_id=user_id, presenter=presenter)
 
-    return JsonResponse(data={"message": "logout success"}, status=200)
+    # return JsonResponse(data={"message": "logout success"}, status=200)
 
 
     # refresh_token = kwargs['request_data']['refresh_token']

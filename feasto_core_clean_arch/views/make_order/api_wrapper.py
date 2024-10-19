@@ -21,9 +21,9 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = MakeOrderInteractor(storage=storage)
 
-    order_response = interactor.make_order(user_id=user_id, items=items, presenter=presenter)
+    return interactor.make_order(user_id=user_id, items=items, presenter=presenter)
 
-    return JsonResponse(data=order_response, status=201)
+    # return JsonResponse(data=order_response, status=201)
 
     #
     # rest = Restaurant.objects.filter(id= items[0]['restaurant_id']).first()

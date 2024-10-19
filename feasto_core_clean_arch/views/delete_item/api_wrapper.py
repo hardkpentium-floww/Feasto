@@ -22,10 +22,10 @@ def api_wrapper(*args, **kwargs):
     interactor = DeleteItemInteractor(storage=storage)
 
 
-    deleted_item = interactor.delete_item(restaurant_id=restaurant_id, item_id=item_id,user_id=user_id, presenter=presenter)
+    return interactor.delete_item(restaurant_id=restaurant_id, item_id=item_id,user_id=user_id, presenter=presenter)
 
 
-    return JsonResponse(data={"message": "deleted the item"}, status=200)
+    # return JsonResponse(data={"message": "deleted the item"}, status=200)
     # try:
     #     restaurant = Restaurant.objects.get(id=restaurant_id)
     #

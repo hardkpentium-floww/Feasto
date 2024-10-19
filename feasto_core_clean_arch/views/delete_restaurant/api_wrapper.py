@@ -16,9 +16,9 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = DeleteRestaurantInteractor(storage=storage)
 
-    deleted_restaurant = interactor.delete_restaurant(restaurant_id=restaurant_id, presenter=presenter, user_id=user_id)
+    return interactor.delete_restaurant(restaurant_id=restaurant_id, presenter=presenter, user_id=user_id)
 
-    return JsonResponse(status=200)
+    # return JsonResponse(status=200)
 
     # check = Restaurant.objects.get(id=restaurant_id).user_id == str(user_id)
     #
