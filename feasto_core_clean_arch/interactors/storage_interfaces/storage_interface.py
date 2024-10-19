@@ -3,6 +3,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Optional, List
 
+from feasto_core_clean_arch.constants.enum import StatusType
 
 
 @dataclass()
@@ -25,7 +26,7 @@ class RestaurantDTO:
     name: str
     user: UserDTO
     location: str
-    status: str
+    status: StatusType
 
 @dataclass()
 class OrderItemDTO:
@@ -67,7 +68,7 @@ class StorageInterface:
 
     @abstractmethod
     def add_restaurant(self,
-                 name: str, user_id: str, status: str, location: str) -> ItemDTO:
+                 name: str, user_id: str, status: StatusType, location: str) -> RestaurantDTO:
         pass
 
     @abstractmethod
@@ -77,7 +78,7 @@ class StorageInterface:
 
     @abstractmethod
     def update_restaurant(self,
-                    name: str, status: str , user_id: str, rest_id: int) -> RestaurantDTO:
+                    name: str, status: StatusType , user_id: str, rest_id: int) -> RestaurantDTO:
         pass
 
     @abstractmethod

@@ -1,3 +1,4 @@
+from feasto_core_clean_arch.constants.enum import StatusType
 from feasto_core_clean_arch.interactors.storage_interfaces.storage_interface import StorageInterface
 from feasto_core_clean_arch.presenters.presenter_implementation import PresenterImplementation
 
@@ -11,7 +12,7 @@ class AddRestaurantInteractor:
                  presenter: PresenterImplementation,
                  name: str,
                  location: str,
-                 status: str,
+                 status: StatusType,
                  user_id: int
                  ) :
 

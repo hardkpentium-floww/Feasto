@@ -1,7 +1,6 @@
 from django.utils import timezone
 from datetime import timedelta
 
-from django.contrib.auth.middleware import get_user
 from future.backports.datetime import timedelta
 from ib_users.models import UserAccount
 from oauth2_provider.models import Application
@@ -11,6 +10,7 @@ from oauthlib.common import generate_token
 from feasto_core_clean_arch.models import OrderItem, Order
 from feasto_core_clean_arch.interactors.storage_interfaces.storage_interface import StorageInterface, ItemDTO, \
     RestaurantDTO, UserDTO, OrderItemDTO, OrderDTO, LoginDTO
+from ..constants.enum import StatusType
 from ..exceptions.custom_exceptions import InvalidRestaurantOwnerId, InvalidRestaurantId, InvalidItemId, InvalidUserId
 from ..models import User,Item
 from typing import List
@@ -77,7 +77,7 @@ class StorageImplementation(StorageInterface):
         return item_dto
 
     def add_restaurant(self,
-                 name: str, user_id: str, status: str, location: str) -> RestaurantDTO:
+                 name: str, user_id: str, status: StatusType, location: str) -> RestaurantDTO:
         user = User.objects.get(id = user_id)
         restaurant = Restaurant.objects.create(
             name=name,
@@ -121,23 +121,23 @@ class StorageImplementation(StorageInterface):
         return item_dto
 
     def update_restaurant(self,
-                    name: str, status: str, user_id: str, rest_id: int ) -> RestaurantDTO:
-        updatated_restaurant = Restaurant.objects.get(id=rest_id)
+                    name: str, status: StatusType, user_id: str, rest_id: int ) -> RestaurantDTO:
+        updated_restaurant = Restaurant.objects.get(id=rest_id)
 
         if name:
-            updatated_restaurant.name = name
+            updated_restaurant.name = name
 
         if status:
-            updatated_restaurant.status = status
+            updated_restaurant.status = status
 
-        updatated_restaurant.save()
+        updated_restaurant.save()
         user_dto = self.get_user(user_id)
         restaurant_data = RestaurantDTO(
-            id= updatated_restaurant.id,
-            name= updatated_restaurant.name,
+            id= updated_restaurant.id,
+            name= updated_restaurant.name,
             user= user_dto,
-            location= updatated_restaurant.location,
-            status= updatated_restaurant.status
+            location= updated_restaurant.location,
+            status= updated_restaurant.status
         )
 
         return restaurant_data
