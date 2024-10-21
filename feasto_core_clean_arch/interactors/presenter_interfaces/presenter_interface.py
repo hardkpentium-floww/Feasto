@@ -23,7 +23,7 @@ class PresenterInterface:
     def get_error_response_for_invalid_restaurant_owner(self):
         pass
     @abstractmethod
-    def get_response_for_get_items(self, items_dto: List[ItemDTO]):
+    def get_response_for_get_items(self, item_dtos: List[ItemDTO]):
         pass
 
     @abstractmethod

@@ -12,5 +12,5 @@ ITEM_NOT_FOUND = (
 )
 NOT_RESTAURANT_OWNER = (
     "Invalid owner, try with valid user account",
-    "INVALID_OWNER"
+    "NOT_RESTAURANT_OWNER"
 )

@@ -9,29 +9,32 @@ class MakeOrderInteractor:
     def __init__(self, storage: StorageInterface):
         self.storage = storage
 
+    def make_order_wrapper(self, user_id: str,
+                 presenter: PresenterInterface,
+                 items: List[dict]):
+        try:
+            order_dto = self.make_order(
+                user_id=user_id,
+                items=items
+            )
+        except InvalidItemId:
+            return presenter.get_error_response_for_item_not_found()
+        except InvalidRestaurantId:
+            return presenter.get_error_response_for_restaurant_not_found()
+
+        return presenter.get_response_for_make_order(order_dto=order_dto)
+
+
     def make_order(self,
                  user_id: str,
-                 presenter: PresenterInterface,
                  items: List[dict]
                  ) :
         item_ids = [item["item_id"] for item in items]
         restaurant_ids = [item["restaurant_id"] for item in items]
 
-        try:
-            self.storage.bulk_validate_items_ids(item_ids)
-        except InvalidItemId as e:
-            for invalid_id in e.item_id:
-                presenter.get_error_response_for_item_not_found()
-                return
-            return
 
-        try:
-            self.storage.bulk_validate_restaurant_ids(restaurant_ids)
-        except InvalidRestaurantId as e:
-            for invalid_id in e.restaurant_id:
-                presenter.get_error_response_for_restaurant_not_found()
-                return
-            return
+        self.storage.bulk_validate_items_ids(item_ids)
+        self.storage.bulk_validate_restaurant_ids(restaurant_ids)
 
         items_data = []
 
@@ -49,5 +52,5 @@ class MakeOrderInteractor:
             user_id= user_id,
             items_data= items_data,
         )
+        return order_dto
 
-        return presenter.get_response_for_make_order(order_dto= order_dto)

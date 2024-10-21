@@ -9,18 +9,27 @@ class GetItemsInteractor:
     def __init__(self, storage: StorageInterface):
         self.storage = storage
 
-    def get_items(self,
+    def get_items_wrapper(self,
                  restaurant_id: int,
                  presenter: PresenterInterface,
                  ) :
         try:
-            self.storage.validate_restaurant_id(restaurant_id=restaurant_id)
+            item_dtos = self.get_items(restaurant_id=restaurant_id)
+
         except InvalidRestaurantId:
-            presenter.get_error_response_for_restaurant_not_found()
-            return
+            return presenter.get_error_response_for_restaurant_not_found()
+
+
+        return presenter.get_response_for_get_items(item_dtos)
+
+    def get_items(self,
+                 restaurant_id: int,
+                 ) :
+        self.storage.validate_restaurant_id(restaurant_id=restaurant_id)
 
         item_dtos = self.storage.get_items(
             restaurant_id= restaurant_id
         )
 
-        return presenter.get_response_for_get_items(items_dto=item_dtos)
+        return item_dtos
+

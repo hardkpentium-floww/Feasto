@@ -50,9 +50,9 @@ class PresenterImplementation(PresenterInterface):
 
         return JsonResponse(data=data, status=status)
 
-    def get_response_for_get_items(self, items_dto: List[ItemDTO]):
+    def get_response_for_get_items(self, item_dtos: List[ItemDTO]):
         response_items = []
-        for item in items_dto:
+        for item in item_dtos:
             response_item = self._get_item_dict(item)
             response_items.append(response_item)
 
