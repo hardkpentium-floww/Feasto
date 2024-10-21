@@ -30,7 +30,7 @@ def api_wrapper(*args, **kwargs):
         status=rest_status,
         user_id=user_id
     )
-    restaurant_response = interactor.add_restaurant(presenter=presenter,add_restaurant_dto=add_restaurant_dto)
+    restaurant_response = interactor.add_restaurant_wrapper(presenter=presenter,add_restaurant_dto=add_restaurant_dto)
 
     return restaurant_response
 

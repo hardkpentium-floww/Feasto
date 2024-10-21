@@ -21,5 +21,5 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = LoginInteractor(storage=storage)
 
-    return interactor.login(user_id=user_id, presenter=presenter)
+    return interactor.login_wrapper(user_id=user_id, presenter=presenter)
 

@@ -10,23 +10,26 @@ class UpdateRestaurantInteractor:
 
     def __init__(self, storage: StorageInterface):
         self.storage = storage
+    def update_restaurant_wrapper(self,
+                          update_restaurant_dto: UpdateRestaurantDTO,
+                          presenter: PresenterInterface
+                          ):
+
+        try:
+            restaurant_dto= self.update_restaurant(update_restaurant_dto=update_restaurant_dto)
+
+        except InvalidRestaurantId:
+            return presenter.get_error_response_for_restaurant_not_found()
+
+        return presenter.get_response_for_update_restaurant(restaurant_dto= restaurant_dto)
 
     def update_restaurant(self,
                           update_restaurant_dto: UpdateRestaurantDTO,
-                          presenter: PresenterInterface,
-
                           ) :
 
         rest_id = update_restaurant_dto.rest_id
+        self.storage.validate_restaurant_id(restaurant_id=rest_id)
 
-        try:
-            self.storage.validate_restaurant_id(restaurant_id=rest_id)
-        except InvalidRestaurantId:
-            presenter.get_error_response_for_restaurant_not_found()
-            return
+        rest_dto = self.storage.update_restaurant(update_restaurant_dto=update_restaurant_dto)
 
-        rest_dto = self.storage.update_restaurant(update_restaurant_dto=
-                                                  update_restaurant_dto
-        )
-
-        return presenter.get_response_for_update_restaurant(restaurant_dto= rest_dto)
+        return rest_dto

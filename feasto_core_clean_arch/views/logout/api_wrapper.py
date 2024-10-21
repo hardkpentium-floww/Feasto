@@ -18,5 +18,5 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = LogoutInteractor(storage=storage)
 
-    return interactor.logout(user_id=user_id, presenter=presenter)
+    return interactor.logout_wrapper(user_id=user_id, presenter=presenter)
 

@@ -21,5 +21,5 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = MakeOrderInteractor(storage=storage)
 
-    return interactor.make_order(user_id=user_id, items=items, presenter=presenter)
+    return interactor.make_order_wrapper(user_id=user_id, items=items, presenter=presenter)
 

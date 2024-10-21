@@ -33,6 +33,6 @@ def api_wrapper(*args, **kwargs):
         offset=offset,
         limit=limit
     )
-    return interactor.get_restaurants(get_restaurant_dto=get_restaurant_dto, presenter= presenter)
+    return interactor.get_restaurants_wrapper(get_restaurant_dto=get_restaurant_dto, presenter= presenter)
 
     # return JsonResponse(data=restaurants_response, status=201)

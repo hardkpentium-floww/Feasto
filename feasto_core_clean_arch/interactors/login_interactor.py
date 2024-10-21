@@ -23,14 +23,15 @@ class LoginInteractor:
     def __init__(self, storage: StorageInterface):
         self.storage = storage
 
+    def login_wrapper(self, user_id: str, presenter: PresenterInterface):
+        try:
+            login_dto = self.login(user_id=user_id, presenter=presenter)
+        except InvalidUserId:
+            return presenter.get_error_response_for_invalid_user()
 
-    # login_dto = AuthenticationTokensDTO(
-    #     access_token=access_token_str,
-    #     expires_in=expires,
-    #     token_type="Bearer",
-    #     scope="read write",
-    #     refresh_token=refresh_token_str
-    # )
+
+        return login_dto
+
 
     def login(self,
                  user_id: str,
@@ -63,11 +64,8 @@ class LoginInteractor:
         refresh_token = self.storage.create_refresh_token(
             refresh_token_dto=refresh_token_dto
         )
-        try:
-            self.storage.validate_user_id(user_id=user_id)
-        except InvalidUserId:
-            presenter.get_error_response_for_invalid_user()
-            return
+
+        self.storage.validate_user_id(user_id=user_id)
 
         login_dto = AuthenticationTokensDTO(
             access_token=self.access_token_str,
@@ -78,4 +76,4 @@ class LoginInteractor:
         )
 
 
-        return presenter.get_response_for_login(login_dto= login_dto)
+        return login_dto

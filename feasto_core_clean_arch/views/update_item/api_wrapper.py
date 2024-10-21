@@ -32,5 +32,5 @@ def api_wrapper(*args, **kwargs):
         restaurant_id=restaurant_id,
         user_id=user_id
         )
-    return interactor.update_item(update_item_dto=update_item_dto, presenter=presenter)
+    return interactor.update_item_wrapper(update_item_dto=update_item_dto, presenter=presenter)
 

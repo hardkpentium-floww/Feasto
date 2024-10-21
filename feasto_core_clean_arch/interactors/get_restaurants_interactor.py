@@ -8,9 +8,18 @@ class GetRestaurantsInteractor:
 
     def __init__(self, storage: StorageInterface):
         self.storage = storage
+    def get_restaurants_wrapper(self,
+                 presenter: PresenterImplementation,
+                 get_restaurant_dto: GetRestaurantDTO
+                 ) :
+
+        restaurants_dto= self.get_restaurants(
+            get_restaurant_dto=get_restaurant_dto
+        )
+
+        return presenter.get_response_for_get_restaurants(restaurants_dto=restaurants_dto)
 
     def get_restaurants(self,
-                 presenter: PresenterInterface,
                  get_restaurant_dto: GetRestaurantDTO
                  ) :
 
@@ -18,4 +27,4 @@ class GetRestaurantsInteractor:
             get_restaurant_dto=get_restaurant_dto,
         )
 
-        return presenter.get_response_for_get_restaurants(restaurants_dto=restaurants_dto)
+        return restaurants_dto

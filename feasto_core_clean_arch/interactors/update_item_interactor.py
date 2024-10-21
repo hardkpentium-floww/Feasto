@@ -9,31 +9,34 @@ class UpdateItemInteractor:
     def __init__(self, storage: StorageInterface):
         self.storage = storage
 
-    def update_item(self,
+    def update_item_wrapper(self,
                  update_item_dto: UpdateItemDTO,
                  presenter: PresenterInterface
                  ) :
+        try:
+            update_item_dto = self.update_item(
+                update_item_dto= update_item_dto,
+            )
+        except InvalidRestaurantId:
+            return presenter.get_error_response_for_restaurant_not_found()
+        except InvalidItemId:
+            return presenter.get_error_response_for_item_not_found()
 
-        user_id = update_item_dto.user_id
+
+        return update_item_dto
+    def update_item(self,
+                 update_item_dto: UpdateItemDTO
+                 ) :
+
         item_id = update_item_dto.item_id
         restaurant_id = update_item_dto.restaurant_id
-        name = update_item_dto.name
-        available_quantity = update_item_dto.available_quantity
 
-        try:
-            self.storage.validate_restaurant_id(restaurant_id=restaurant_id)
-        except InvalidRestaurantId:
-            presenter.get_error_response_for_restaurant_not_found()
-            return
+        self.storage.validate_restaurant_id(restaurant_id=restaurant_id)
+        self.storage.validate_item_id(item_id=item_id)
 
-        try:
-            self.storage.validate_item_id(item_id=item_id)
-        except InvalidItemId:
-            presenter.get_error_response_for_item_not_found()
-            return
 
         item_dto = self.storage.update_item(
             update_item_dto= update_item_dto
         )
 
-        return presenter.get_response_for_update_item(item_dto= item_dto)
+        return item_dto

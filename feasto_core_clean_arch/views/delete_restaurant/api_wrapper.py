@@ -16,4 +16,4 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = DeleteRestaurantInteractor(storage=storage)
 
-    return interactor.delete_restaurant(restaurant_id=restaurant_id, presenter=presenter, user_id=user_id)
+    return interactor.delete_restaurant_wrapper(restaurant_id=restaurant_id, presenter=presenter, user_id=user_id)

@@ -17,5 +17,5 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = GetOrdersForUserInteractor(storage=storage)
 
-    return interactor.get_orders_for_user(user_id=user_id, presenter=presenter)
+    return interactor.get_orders_for_user_wrapper(user_id=user_id, presenter=presenter)
 

@@ -7,12 +7,20 @@ class LogoutInteractor:
 
     def __init__(self, storage: StorageInterface):
         self.storage = storage
+    def logout_wrapper(self,
+                 user_id: int,
+                 presenter: PresenterInterface):
+
+        self.logout(
+            user_id= user_id
+        )
+
+
 
     def logout(self,
                  user_id: int,
-                 presenter: PresenterInterface,
                  ) :
 
-        logout_dto = self.storage.logout(
+        self.storage.logout(
             user_id= user_id
         )
