@@ -1,0 +1,1030 @@
+{
+  "swagger": "2.0",
+  "host": "localhost:8000",
+  "basePath": "/api/",
+  "info": {
+    "version": "1.0.0",
+    "title": "Simple API",
+    "description": "An API for online food delivery system"
+  },
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "oauth": {
+      "tokenUrl": "http://auth.ibtspl.com/oauth2/",
+      "flow": "password",
+      "scopes": {
+        "read": "read users",
+        "write": "create users",
+        "update": "update users",
+        "delete": "delete users",
+        "superuser": "super user permission"
+      },
+      "type": "oauth2"
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "phone_no": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+          "id": {
+              "type": "integer"
+          },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "phone_no",
+          "id",
+          "name"
+      ]
+    },
+    "Restaurant": {
+      "type": "object",
+      "properties": {
+
+          "id": {
+              "type": "integer"
+          },
+        "name": {
+          "type": "string"
+        },
+        "user": {
+           "$ref": "#/definitions/User"
+        },
+        "location": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum":[
+            "AVAILABLE",
+            "UNAVAILABLE"
+            ]
+
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "name",
+        "user",
+        "location",
+        "status",
+        "id"
+      ]
+    },
+    "Item": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "available_quantity": {
+          "type": "integer"
+        },
+          "restaurant_id" : {
+               "type": "integer"
+          },
+          "id": {
+              "type": "integer"
+          },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "name",
+        "available_quantity",
+          "restaurant_id",
+          "id"
+      ]
+    },
+    "Order": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+          "id": {
+              "type": "integer"
+          },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "item_id": {
+                "type": "integer"
+              },
+                "order_quantity" : {
+                    "type": "integer"
+                }
+            },
+            "required": [
+              "item_id",
+              "order_quantity"
+            ]
+          }
+        }
+      },
+      "required": [
+        "user_id",
+        "items",
+        "id"
+      ]
+    }
+  },
+  "parameters": {
+    "userParam": {
+      "name": "user_param",
+      "in": "body",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "phone_no": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone_no"
+        ]
+      }
+    },
+    "refreshTokenHeader": {
+      "name": "Authorization",
+      "in": "header",
+
+        "type": "string",
+
+      "required": true,
+      "description": "Bearer refresh_token"
+    },
+
+    "accessTokenParam": {
+      "name": "access_token",
+      "in": "header",
+
+            "type": "string",
+
+
+        "required": true
+      }
+
+  },
+  "responses": {},
+  "paths": {
+    "/login": {
+      "post": {
+        "operationId": "login",
+        "summary": "Login for Person",
+        "description": "Login api for person",
+        "parameters": [
+          {
+            "$ref": "#/parameters/userParam"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Login Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                },
+                "expires_in": {
+                  "type": "integer"
+                },
+                "token_type": {
+                  "type": "string"
+                },
+                "scope": {
+                  "type": "string"
+                },
+                "refresh_token": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "access_token",
+                "expires_in",
+                "token_type",
+                "refresh_token",
+                "scope"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "operationId": "logout",
+        "summary": "logout for a Person",
+        "description": "logout api for a person",
+        "parameters": [
+        ],
+         "security": [
+          {
+              "oauth": [
+                  "read"
+
+              ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logout Success"
+          }
+        }
+      }
+    },
+     "/get_restaurants": {
+  "get": {
+    "operationId": "get_restaurants",
+    "summary": "Get Restaurants for a Person",
+    "description": "Get Restaurants API for a person",
+    "parameters": [
+      {
+        "name": "status",
+        "in": "query",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "AVAILABLE",
+          "UNAVAILABLE"
+        ]
+      },
+      {
+        "name": "location",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "type": "integer",
+        "required": false
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "type": "integer",
+        "required": true
+      }
+    ],
+    "security": [
+      {
+        "oauth": [
+          "read"
+        ]
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Return all restaurants with matching query",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "restaurants": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Restaurant"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+,
+    "/get_items": {
+      "get": {
+        "operationId": "get_items",
+        "summary": "get items for a Person from restaurant",
+        "description": "get items api for a person from restaurant",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "query",
+            "type": "integer",
+            "required": true
+            }
+
+        ],
+        "responses": {
+          "200": {
+            "description": "return list of items at restaurant",
+
+            "schema": {
+              "type": "object",
+              "properties": {
+
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Item"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/add_item": {
+      "post": {
+        "operationId": "add_item",
+        "summary": "add item for a Person from restaurant",
+        "description": "add item api for a person from restaurant",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+           {
+            "name": "item_details",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+
+                },
+                "available_quantity": {
+                  "type": "integer"
+
+                },
+
+                "restaurant_id": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "name",
+                "available_quantity",
+                "restaurant_id"
+              ]
+            }
+      }
+
+        ],
+        "responses": {
+          "201": {
+            "description": "return item at added to restaurant",
+
+            "schema": {
+              "type": "object",
+              "properties": {
+
+                "item": {
+
+                    "$ref": "#/definitions/Item"
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/update_item": {
+      "post": {
+        "operationId": "update_item",
+        "summary": "update item  from restaurant",
+        "description": "update item api from restaurant",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+           {
+            "name": "item_details",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+
+                },
+                "available_quantity": {
+                  "type": "integer"
+
+                },
+
+                "restaurant_id": {
+                  "type": "integer"
+
+                },
+                 "item_id": {
+                  "type": "integer"
+
+                }
+              }
+
+            }
+      }
+
+        ],
+        "responses": {
+          "200": {
+            "description": "return updated item at the restaurant",
+
+            "schema": {
+              "type": "object",
+              "properties": {
+
+                "item": {
+
+                    "$ref": "#/definitions/Item"
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete_item": {
+      "post": {
+        "operationId": "delete_item",
+        "summary": "delete item  from restaurant",
+        "description": "delete item api from restaurant",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+           {
+            "name": "item_details",
+            "in": "body",
+
+            "schema": {
+              "type": "object",
+              "properties": {
+                "item_id": {
+                  "type": "integer"
+
+                },
+
+                "restaurant_id": {
+                  "type": "integer"
+
+                }
+              }
+
+            },
+            "required":true
+      }
+
+        ],
+        "responses": {
+          "200": {
+            "description": "item deleted from the restaurant"
+
+          }
+        }
+      }
+    },
+        "/delete_restaurant": {
+      "post": {
+        "operationId": "delete_restaurant",
+        "summary": "delete restaurant",
+        "description": "delete restaurant api",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+           {
+            "name": "item_details",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+
+                "restaurant_id": {
+                  "type": "integer"
+
+                }
+              }
+
+            }
+
+      }
+
+        ],
+        "responses": {
+          "200": {
+            "description": "deleted restaurant"
+
+          }
+        }
+      }
+    },
+  "/add_restaurant": {
+  "post": {
+    "operationId": "add_restaurant",
+    "summary": "Add Restaurant provided by owner",
+    "description": "Add Restaurant provided by owner",
+    "security": [
+      {
+        "oauth": [
+          "read"
+        ]
+      }
+    ],
+    "parameters": [
+      {
+        "name": "restaurant_details",
+        "in": "body",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The name of the restaurant"
+            },
+            "location": {
+              "type": "string",
+              "description": "The location of the restaurant"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "AVAILABLE",
+                "UNAVAILABLE"
+              ],
+              "description": "The availability status of the restaurant"
+            },
+            "owner_name": {
+              "type": "string",
+              "description": "The name of the restaurant owner"
+            }
+          },
+          "required": [
+            "location",
+            "owner_name",
+            "status"
+          ]
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Restaurant Created",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "restaurant": {
+              "$ref": "#/definitions/Restaurant"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Restaurant Can't be Created"
+      }
+    }
+  }
+},
+
+  "/update_restaurant": {
+  "post": {
+    "operationId": "update_restaurant",
+    "summary": "Update Restaurant details provided by owner",
+    "description": "Update Restaurant details provided by owner",
+    "security": [
+      {
+        "oauth": [
+          "read"
+        ]
+      }
+    ],
+    "parameters": [
+      {
+        "name": "restaurant_details",
+        "in": "body",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "ID of the restaurant to update"
+            },
+            "name": {
+              "type": "string",
+              "description": "Updated name of the restaurant"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "AVAILABLE",
+                "UNAVAILABLE"
+              ],
+              "description": "Updated status of the restaurant"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Restaurant Update Success",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "restaurant": {
+              "$ref": "#/definitions/Restaurant"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Restaurant Can't be Updated"
+      }
+    }
+  }
+},
+
+    "/make_order": {
+      "post": {
+        "operationId": "make_order",
+        "summary": "create order for items provided by user",
+        "description": "create order for items provided by user",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ordered_items",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+              "items": {
+                 "type": "array",
+                 "items": {
+
+                "type": "object",
+                "properties": {
+                  "item_id": {
+                    "type": "integer"
+                  },
+                  "restaurant_id": {
+                    "type": "integer"
+                  },
+                  "order_quantity": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "item_id",
+                  "restaurant_id",
+                  "order_quantity"
+                ]
+              }
+              }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order Success",
+             "schema": {
+              "type": "object",
+              "properties": {
+
+                "order": {
+
+                    "$ref": "#/definitions/Order"
+
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Order Failed"
+          }
+        }
+      }
+    },
+    "/search_item": {
+      "post": {
+        "operationId": "search_item",
+        "summary": "search item provided by user in all restaurant and return all items",
+        "description": "search item provided by user in all restaurant and return all items",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "search_item",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Search Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Item"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Search Failed"
+          }
+        }
+      }
+    },
+    "/search_location": {
+      "post": {
+        "operationId": "search_location",
+        "summary": "search Location provided by user in all restaurant and return all restaurant at Location",
+        "description": "search Location provided by user in all restaurant and return all restaurant at Location",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Search Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+
+                },
+                "restaurants": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Restaurant"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Search Failed"
+          }
+        }
+      }
+    },
+    "/search_status": {
+      "post": {
+        "operationId": "search_status",
+        "summary": "search Restaurant status provided by user",
+        "description": "search Restaurant status provided by user",
+         "security": [
+          {
+              "oauth": [
+                  "read"
+              ]
+          }
+        ],
+       "parameters": [
+        {
+          "name": "status",
+          "in": "query",
+          "required": true,
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "UNAVAILABLE"
+            ]
+
+        }
+      ],
+
+        "responses": {
+          "201": {
+            "description": "Search Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Search completed successfully"
+                },
+                "restaurants": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Restaurant"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Search Failed"
+          }
+        }
+      }
+    },
+    "/search_restaurant": {
+             "post": {
+                "operationId": "search_restaurant",
+                "summary": "search Restaurant provided by user in all restaurant and return all Restaurant",
+                "description": "search Restaurant provided by user in all restaurant and return all Restaurant",
+                 "security": [
+                  {
+                      "oauth": [
+                          "read"
+                      ]
+                  }
+                ],
+               "parameters": [
+
+                  {
+                    "name": "restaurant",
+                    "in": "query",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Search Success",
+
+                          "schema": {
+                            "type": "object",
+                            "properties": {
+                              "message": {
+                                "type": "string",
+                                "example": "Search completed successfully"
+                              },
+                              "restaurants": {
+                                  "type": "array",
+                                  "items": {
+
+                                      "$ref": "#/definitions/Restaurant"
+
+
+
+                                  }
+                                }
+
+                          }
+                        }
+                      },
+
+
+                    "400": {
+                        "description": "Search Failed"
+
+                        }
+
+
+                    }
+                }
+        },
+        "/get_orders_for_user":{
+          "get": {
+                "operationId": "get_orders_for_user",
+                "summary": "search all order related to a user",
+                "description": "search all order related to a user",
+             "security": [
+                {
+                    "oauth": [
+                        "read"
+                    ]
+                }
+              ],
+              "parameters": [
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Order Search Success",
+
+                          "schema": {
+                            "type": "object",
+                            "properties": {
+
+                               "orders": {
+                                  "type": "array",
+                                  "items": {
+
+                                      "$ref": "#/definitions/Order"
+                                  }
+                                }
+
+                          }
+                        }
+                      },
+
+
+                    "400": {
+                        "description": "Search Failed"
+
+                        }
+
+
+
+                    }
+                }
+        }
+      }
+
+}
