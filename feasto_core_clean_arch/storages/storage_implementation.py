@@ -9,7 +9,7 @@ from oauth2_provider.models import AccessToken, RefreshToken
 from feasto_core_clean_arch.models import OrderItem, Order
 from feasto_core_clean_arch.interactors.storage_interfaces.storage_interface import StorageInterface, ItemDTO, \
     RestaurantDTO, UserDTO, OrderItemDTO, OrderDTO, AuthenticationTokensDTO, AddRestaurantDTO, UpdateRestaurantDTO, \
-    GetRestaurantDTO, AccessTokenDTO, RefreshTokenDTO
+    GetRestaurantDTO, AccessTokenDTO, RefreshTokenDTO, UpdateItemDTO
 from ..constants.enum import RestaurantStatus
 from ..exceptions.custom_exceptions import InvalidRestaurantOwnerId, InvalidRestaurantId, InvalidItemId, InvalidUserId
 from ..models import User,Item
@@ -100,10 +100,9 @@ class StorageImplementation(StorageInterface):
         location = add_restaurant_dto.location
         status = add_restaurant_dto.status
 
-        user = User.objects.get(id = user_id)
         restaurant = Restaurant.objects.create(
             name=name,
-            user=user,
+            user_id=user_id,
             location=location,
             status=status
         )

@@ -4,7 +4,7 @@ from feasto_core_clean_arch.interactors.storage_interfaces.storage_interface imp
 from feasto_core_clean_arch.presenters.presenter_implementation import PresenterImplementation
 
 
-class AddItemInteractor:
+class AddItemInRestaurantMenuInteractor:
 
     def __init__(self, storage: StorageInterface):
         self.storage = storage

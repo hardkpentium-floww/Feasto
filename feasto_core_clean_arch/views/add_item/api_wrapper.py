@@ -3,6 +3,7 @@ from django_swagger_utils.drf_server.utils.decorator.interface_decorator \
     import validate_decorator
 from .validator_class import ValidatorClass
 from ...interactors.add_item_interactor import AddItemInteractor
+from ...interactors.add_restaurant_interactor import AddItemInRestaurantMenuInteractor
 from ...presenters.presenter_implementation import PresenterImplementation
 from ...storages.storage_implementation import StorageImplementation
 
@@ -16,7 +17,7 @@ def api_wrapper(*args, **kwargs):
     restaurant_id =  kwargs['request_data']['restaurant_id']
     storage = StorageImplementation()
     presenter = PresenterImplementation()
-    interactor = AddItemInteractor(storage=storage)
+    interactor = AddItemInRestaurantMenuInteractor(storage=storage)
 
     # rest = Restaurant.objects.get(id = restaurant_id)
     item_response = interactor.add_item_wrapper(restaurant_id = restaurant_id,user_id= user_id, name= name, available_quantity=available_quantity, presenter=presenter)

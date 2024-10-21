@@ -83,7 +83,7 @@ class UpdateRestaurantDTO:
 @dataclass()
 class OrderDTO:
     id: int
-    user_id: int
+    user_id: str
     items: List[OrderItemDTO]
 
 @dataclass()

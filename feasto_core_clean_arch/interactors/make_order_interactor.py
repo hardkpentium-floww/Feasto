@@ -11,7 +11,7 @@ class MakeOrderInteractor:
 
     def make_order_wrapper(self, user_id: str,
                  presenter: PresenterInterface,
-                 items: List[dict]):
+                 items: List[OrderItemDTO]):
         try:
             order_dto = self.make_order(
                 user_id=user_id,
@@ -27,7 +27,7 @@ class MakeOrderInteractor:
 
     def make_order(self,
                  user_id: str,
-                 items: List[dict]
+                 items: List[OrderItemDTO]
                  ) :
         item_ids = [item["item_id"] for item in items]
         restaurant_ids = [item["restaurant_id"] for item in items]
@@ -36,21 +36,10 @@ class MakeOrderInteractor:
         self.storage.bulk_validate_items_ids(item_ids)
         self.storage.bulk_validate_restaurant_ids(restaurant_ids)
 
-        items_data = []
-
-        for item in items:
-            order_item_dto = OrderItemDTO(
-                item_id=item["item_id"],
-                order_quantity=item["order_quantity"],
-                order_id=item["order_id"]
-            )
-            items_data.append(
-                order_item_dto
-            )
 
         order_dto = self.storage.make_order(
             user_id= user_id,
-            items_data= items_data,
+            items_data= items,
         )
         return order_dto
 
