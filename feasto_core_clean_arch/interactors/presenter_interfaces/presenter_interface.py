@@ -2,25 +2,25 @@ from abc import abstractmethod
 from typing import List
 
 from feasto_core_clean_arch.interactors.storage_interfaces.storage_interface import ItemDTO, RestaurantDTO, OrderDTO, \
-    LoginDTO
+    AuthenticationTokensDTO
 
 
 class PresenterInterface:
 
     @abstractmethod
-    def error_response_for_invalid_user(self):
+    def get_error_response_for_invalid_user(self):
         pass
 
     @abstractmethod
-    def error_response_for_restaurant_not_found(self):
+    def get_error_response_for_restaurant_not_found(self):
         pass
 
     @abstractmethod
-    def error_response_for_item_not_found(self):
+    def get_error_response_for_item_not_found(self):
         pass
 
     @abstractmethod
-    def error_response_for_invalid_restaurant_owner(self):
+    def get_error_response_for_invalid_restaurant_owner(self):
         pass
     @abstractmethod
     def get_response_for_get_items(self, items_dto: List[ItemDTO]):
@@ -55,5 +55,5 @@ class PresenterInterface:
         pass
 
     @abstractmethod
-    def get_response_for_login(self, login_dto: LoginDTO):
+    def get_response_for_login(self, login_dto: AuthenticationTokensDTO):
         pass

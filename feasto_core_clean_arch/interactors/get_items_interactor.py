@@ -16,11 +16,11 @@ class GetItemsInteractor:
         try:
             self.storage.validate_restaurant_id(restaurant_id=restaurant_id)
         except InvalidRestaurantId:
-            presenter.error_response_for_restaurant_not_found()
+            presenter.get_error_response_for_restaurant_not_found()
             return
 
-        items_dto = self.storage.get_items(
+        item_dtos = self.storage.get_items(
             restaurant_id= restaurant_id
         )
 
-        return presenter.get_response_for_get_items(items_dto=items_dto)
+        return presenter.get_response_for_get_items(items_dto=item_dtos)

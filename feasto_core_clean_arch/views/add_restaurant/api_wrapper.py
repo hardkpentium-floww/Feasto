@@ -1,10 +1,13 @@
 from django_swagger_utils.drf_server.utils.decorator.interface_decorator \
     import validate_decorator
+
+from feasto_core.views.add_restaurant.add_restaurant import add_restaurant
 from .validator_class import ValidatorClass
 
 from django.http import JsonResponse
 
-from ...interactors.add_restaurant_interactor import AddRestaurantInteractor
+from ...interactors.add_restaurant_interactor import AddItemInRestaurantMenuInteractor
+from ...interactors.storage_interfaces.storage_interface import AddRestaurantDTO
 from ...presenters.presenter_implementation import PresenterImplementation
 from ...storages.storage_implementation import StorageImplementation
 
@@ -20,25 +23,14 @@ def api_wrapper(*args, **kwargs):
 
     storage = StorageImplementation()
     presenter = PresenterImplementation()
-    interactor = AddRestaurantInteractor(storage=storage)
-
-    restaurant_response = interactor.add_restaurant(presenter=presenter, name=rest_name, location=rest_location, status=rest_status, user_id=user_id)
+    interactor = AddItemInRestaurantMenuInteractor(storage=storage)
+    add_restaurant_dto = AddRestaurantDTO(
+        name=rest_name,
+        location=rest_location,
+        status=rest_status,
+        user_id=user_id
+    )
+    restaurant_response = interactor.add_restaurant(presenter=presenter,add_restaurant_dto=add_restaurant_dto)
 
     return restaurant_response
 
-    # restaurant = Restaurant.objects.create(
-    #     name=rest_name,
-    #     user=user,
-    #     location=rest_location,
-    #     status=rest_status.lower()
-    # )
-    #
-    # restaurant_data = {
-    #     "id": restaurant.id,
-    #     "name": restaurant.name,
-    #     "owner": restaurant.user.name,
-    #     "location": restaurant.location,
-    #     "status": restaurant.status.upper()
-    # }
-    #
-    # return JsonResponse(data=restaurant_data, status=201)

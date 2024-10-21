@@ -3,14 +3,53 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Optional, List
 
-from feasto_core_clean_arch.constants.enum import StatusType
+from feasto_core_clean_arch.constants.enum import RestaurantStatus
+from oauth2_provider.models import Application
 
+@dataclass()
+class AddRestaurantDTO:
+    name: str
+    user_id: str
+    location: str
+    status: RestaurantStatus
+
+@dataclass()
+class AccessTokenDTO:
+    user_id :str
+    token :str
+    application_name:str
+    expires:int
+    scope :str  # Define the scope based on your requirement
+    source_refresh_token :str
+
+
+@dataclass()
+class RefreshTokenDTO:
+    user_id :str
+    token :str
+    application_name:str
+    access_token: str
 
 @dataclass()
 class UserDTO:
     id: str
     name: str
     phone_no: str
+
+@dataclass()
+class GetRestaurantDTO:
+    offset: int
+    limit: int
+    location: str
+    status: RestaurantStatus
+
+@dataclass()
+class UpdateItemDTO:
+    name: str
+    available_quantity: int
+    user_id: str
+    item_id: int
+    restaurant_id: int
 
 @dataclass()
 class ItemDTO:
@@ -26,7 +65,7 @@ class RestaurantDTO:
     name: str
     user: UserDTO
     location: str
-    status: StatusType
+    status: RestaurantStatus
 
 @dataclass()
 class OrderItemDTO:
@@ -34,7 +73,12 @@ class OrderItemDTO:
     order_quantity: int
     order_id: int
 
-
+@dataclass()
+class UpdateRestaurantDTO:
+    name: str
+    status: RestaurantStatus
+    user_id: str
+    rest_id: int
 
 @dataclass()
 class OrderDTO:
@@ -43,7 +87,7 @@ class OrderDTO:
     items: List[OrderItemDTO]
 
 @dataclass()
-class LoginDTO:
+class AuthenticationTokensDTO:
     access_token: str
     refresh_token: str
     expires_in: int
@@ -51,7 +95,15 @@ class LoginDTO:
     token_type: str
 
 class StorageInterface:
-
+    
+    @abstractmethod
+    def bulk_validate_items_ids(self, item_ids):
+        pass
+    
+    @abstractmethod
+    def bulk_validate_restaurant_ids(self, restaurant_ids):
+        pass
+    
     @abstractmethod
     def get_user(self, user_id: int) -> UserDTO:
         pass
@@ -63,22 +115,24 @@ class StorageInterface:
 
     @abstractmethod
     def add_item(self,
-                    restaurant_id: int, name: str = None, available_quantity: int = None) -> ItemDTO:
+                    restaurant_id: int, name: str, available_quantity: int) -> ItemDTO:
         pass
 
+    @abstractmethod
+    def get_user_account(self, user_id: str) -> UserAccount:
+        pass
     @abstractmethod
     def add_restaurant(self,
-                 name: str, user_id: str, status: StatusType, location: str) -> RestaurantDTO:
+                       add_restaurant_dto: AddRestaurantDTO) -> RestaurantDTO:
         pass
 
     @abstractmethod
-    def update_item(self, item_id: int, restaurant_id: int, user_id: int,
-                    name: str = None, available_quantity: int = None) -> ItemDTO:
+    def update_item(self,update_item_dto: UpdateItemDTO) -> ItemDTO:
         pass
 
     @abstractmethod
     def update_restaurant(self,
-                    name: str, status: StatusType , user_id: str, rest_id: int) -> RestaurantDTO:
+                          update_restaurant_dto: UpdateRestaurantDTO) -> RestaurantDTO:
         pass
 
     @abstractmethod
@@ -97,7 +151,7 @@ class StorageInterface:
         pass
 
     @abstractmethod
-    def get_restaurants(self, status: str, location: str, offset: int, limit: int) -> List[RestaurantDTO]:
+    def get_restaurants(self, get_restaurant_dto: GetRestaurantDTO) -> List[RestaurantDTO]:
         pass
 
     @abstractmethod
@@ -106,7 +160,7 @@ class StorageInterface:
         pass
 
     @abstractmethod
-    def make_order(self, items_data: List[dict], user_id: int) -> OrderDTO:
+    def make_order(self, items_data: List[OrderItemDTO], user_id: str) -> OrderDTO:
         pass
 
     @abstractmethod
@@ -117,8 +171,19 @@ class StorageInterface:
     def create_order_item(self,  item_id: int, order_quantity: int, restaurant_id: int):
         pass
 
+
     @abstractmethod
-    def login(self, user_id: int, phone_no: str) -> LoginDTO:
+    def create_refresh_token(self,
+                             refresh_token_dto: RefreshTokenDTO):
+        pass
+
+    @abstractmethod
+    def create_access_token(self,
+                            access_token_dto: AccessTokenDTO):
+        pass
+
+    @abstractmethod
+    def get_application_instance(self, application_name:str) -> Application:
         pass
 
     @abstractmethod
@@ -127,10 +192,6 @@ class StorageInterface:
 
     @abstractmethod
     def get_orders_for_user(self, user_id: str) -> List[OrderDTO]:
-        pass
-
-    @abstractmethod
-    def validate_restaurant_owner(self, restaurant_id:int, user_id:str):
         pass
 
     @abstractmethod

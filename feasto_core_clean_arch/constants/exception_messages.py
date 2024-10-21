@@ -10,7 +10,7 @@ ITEM_NOT_FOUND = (
     "Invalid item id, try with valid item id",
     "ITEM_NOT_FOUND"
 )
-INVALID_OWNER = (
+NOT_RESTAURANT_OWNER = (
     "Invalid owner, try with valid user account",
     "INVALID_OWNER"
 )

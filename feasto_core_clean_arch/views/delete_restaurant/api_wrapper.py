@@ -17,15 +17,3 @@ def api_wrapper(*args, **kwargs):
     interactor = DeleteRestaurantInteractor(storage=storage)
 
     return interactor.delete_restaurant(restaurant_id=restaurant_id, presenter=presenter, user_id=user_id)
-
-    # return JsonResponse(status=200)
-
-    # check = Restaurant.objects.get(id=restaurant_id).user_id == str(user_id)
-    #
-    # if check:
-    #     rest = Restaurant.objects.filter(id=restaurant_id).first()
-    #     rest.delete()
-    #
-    #     return JsonResponse(data={"message":"deleted the restaurant"}, status=200)
-    #
-    # return JsonResponse(data={"message":f'Invalid request,restaurant_id: {restaurant_id} is does not exists'}, status=400)

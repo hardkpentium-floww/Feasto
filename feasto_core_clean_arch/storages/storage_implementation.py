@@ -5,12 +5,12 @@ from future.backports.datetime import timedelta
 from ib_users.models import UserAccount
 from oauth2_provider.models import Application
 from oauth2_provider.models import AccessToken, RefreshToken
-from oauthlib.common import generate_token
 
 from feasto_core_clean_arch.models import OrderItem, Order
 from feasto_core_clean_arch.interactors.storage_interfaces.storage_interface import StorageInterface, ItemDTO, \
-    RestaurantDTO, UserDTO, OrderItemDTO, OrderDTO, LoginDTO
-from ..constants.enum import StatusType
+    RestaurantDTO, UserDTO, OrderItemDTO, OrderDTO, AuthenticationTokensDTO, AddRestaurantDTO, UpdateRestaurantDTO, \
+    GetRestaurantDTO, AccessTokenDTO, RefreshTokenDTO
+from ..constants.enum import RestaurantStatus
 from ..exceptions.custom_exceptions import InvalidRestaurantOwnerId, InvalidRestaurantId, InvalidItemId, InvalidUserId
 from ..models import User,Item
 from typing import List
@@ -28,15 +28,32 @@ class StorageImplementation(StorageInterface):
         )
         return user_dto
 
+    def bulk_validate_items_ids(self, item_ids):
+        valid_item_ids = Item.objects.filter(item_id__in=item_ids).values_list('item_id', flat=True)
+
+        invalid_item_ids = set(item_ids) - set(valid_item_ids)
+
+        if invalid_item_ids:
+            raise InvalidItemId(invalid_item_ids)
+
+        return valid_item_ids
+
+    def bulk_validate_restaurant_ids(self, restaurant_ids):
+        valid_restaurant_ids = Restaurant.objects.filter(restaurant_id__in=restaurant_ids).values_list(
+            'restaurant_id', flat=True)
+
+        invalid_restaurant_ids = set(restaurant_ids) - set(valid_restaurant_ids)
+
+        if invalid_restaurant_ids:
+            raise InvalidRestaurantId(invalid_restaurant_ids)
+
+        return valid_restaurant_ids
+
     def validate_item_id(self, item_id:int):
         item = Item.objects.filter(id=item_id).exists()
         if not item:
             raise InvalidItemId
 
-    def validate_restaurant_owner(self,restaurant_id:int, user_id:str):
-        rest = Restaurant.objects.get(id=restaurant_id)
-        if rest.user_id != user_id:
-            raise InvalidRestaurantOwnerId
     def validate_user_id(self, user_id:str):
         user = User.objects.filter(id=user_id).exists()
         if not user:
@@ -60,7 +77,7 @@ class StorageImplementation(StorageInterface):
         return item_dto
 
     def add_item(self,
-                    restaurant_id: int, name: str = None, available_quantity: int = None) -> ItemDTO:
+                    restaurant_id: int, name: str, available_quantity: int) -> ItemDTO:
         item = Item.objects.create(
             name=name,
             available_quantity=available_quantity,
@@ -77,7 +94,12 @@ class StorageImplementation(StorageInterface):
         return item_dto
 
     def add_restaurant(self,
-                 name: str, user_id: str, status: StatusType, location: str) -> RestaurantDTO:
+                       add_restaurant_dto: AddRestaurantDTO) -> RestaurantDTO:
+        user_id = add_restaurant_dto.user_id
+        name = add_restaurant_dto.name
+        location = add_restaurant_dto.location
+        status = add_restaurant_dto.status
+
         user = User.objects.get(id = user_id)
         restaurant = Restaurant.objects.create(
             name=name,
@@ -98,15 +120,17 @@ class StorageImplementation(StorageInterface):
 
         return restaurant_dto
 
+    def update_item(self, update_item_dto: UpdateItemDTO) -> ItemDTO:
+        item_id = update_item_dto.item_id
+        name = update_item_dto.name
+        available_quantity = update_item_dto.available_quantity
 
-    def update_item(self, item_id: int, restaurant_id: int,user_id: int,
-                name: str= None, available_quantity:int= None) -> ItemDTO:
         item = Item.objects.get(id=item_id)
 
         if name:
             item.name = name
 
-        if available_quantity:
+        if available_quantity>=0:
             item.available_quantity = available_quantity
 
         item.save()
@@ -121,7 +145,12 @@ class StorageImplementation(StorageInterface):
         return item_dto
 
     def update_restaurant(self,
-                    name: str, status: StatusType, user_id: str, rest_id: int ) -> RestaurantDTO:
+                          update_restaurant_dto: UpdateRestaurantDTO) -> RestaurantDTO:
+        rest_id = update_restaurant_dto.rest_id
+        name = update_restaurant_dto.name
+        status = update_restaurant_dto.status
+        user_id = update_restaurant_dto.user_id
+
         updated_restaurant = Restaurant.objects.get(id=rest_id)
 
         if name:
@@ -144,7 +173,7 @@ class StorageImplementation(StorageInterface):
 
     def delete_restaurant(self,
                           restaurant_id: int, user_id: int):
-        rest = Restaurant.objects.get(id = restaurant_id)
+        rest = Restaurant.objects.get(id=restaurant_id)
 
         if rest.user_id == user_id:
             rest.delete()
@@ -177,9 +206,13 @@ class StorageImplementation(StorageInterface):
 
         return items_list
 
-    def get_restaurants(self, status: str, location: str, offset: int, limit: int) -> List[RestaurantDTO]:
+    def get_restaurants(self, get_restaurant_dto: GetRestaurantDTO) -> List[RestaurantDTO]:
         fetched_restaurants = Restaurant.objects.all()
 
+        status = get_restaurant_dto.status
+        location = get_restaurant_dto.location
+        offset = get_restaurant_dto.offset
+        limit = get_restaurant_dto.limit
         if status:
             fetched_restaurants = fetched_restaurants.filter(status=status)
 
@@ -209,7 +242,7 @@ class StorageImplementation(StorageInterface):
                         restaurant_id: int) -> RestaurantDTO:
         rest = Restaurant.objects.get(id = restaurant_id)
         user_id = rest.user_id
-        user_dto = get_user(user_id)
+        user_dto = self.get_user(user_id)
         rest_dto = RestaurantDTO(
             id= rest.id,
             name= rest.name,
@@ -220,7 +253,7 @@ class StorageImplementation(StorageInterface):
 
         return rest_dto
 
-    def make_order(self, items_data: List[dict], user_id: int) -> OrderDTO:
+    def make_order(self, item_dtos: List[OrderItemDTO], user_id: str) -> OrderDTO:
 
         # Retrieve the user object from the database
         user = User.objects.get(id=user_id)
@@ -230,13 +263,13 @@ class StorageImplementation(StorageInterface):
 
         # Create order items and their DTOs within the method
         order_item_dtos = []
-        for item_data in items_data:
+        for item_dto in item_dtos:
             # Create an OrderItem in the database and get its corresponding DTO
-            item = Item.objects.get(id=item_data['item_id'])
+            item = Item.objects.get(id=item_dto.item_id)
 
             order_item = self.create_order_item(
                 item=item,
-                order_quantity=item_data['order_quantity'],
+                order_quantity=item_dto.order_quantity,
                 order=order
             )
             order_item_dtos.append(order_item)
@@ -266,44 +299,50 @@ class StorageImplementation(StorageInterface):
         )
         return order_item_dto
 
-    def login(self, user_id: int, phone_no: str) -> LoginDTO:
+    def get_application_instance(self, application_name:str) -> Application:
+        application = Application.objects.filter(name=application_name).first()
+        return application
 
-        application = Application.objects.filter(name='feasto').first()
-        access_token_str = generate_token()
-
-        refresh_token_str = generate_token()
-
-        expires = timezone.now() + timedelta(hours=1)
+    def get_user_account(self, user_id: str) -> UserAccount:
         user = UserAccount.objects.get(user_id=user_id)
+        return user
+
+    def create_access_token(self,
+                            access_token_dto: AccessTokenDTO):
+
+        token = access_token_dto.token
+        user_id = access_token_dto.user_id
+        application_name = access_token_dto.application_name
+        expires = access_token_dto.expires
+        source_refresh_token = access_token_dto.source_refresh_token
+
+        user = self.get_user_account(user_id=user_id)
+        application = self.get_application_instance(application_name=application_name)
 
         access_token = AccessToken.objects.create(
             user=user,
-            token=access_token_str,
+            token=token,
             application=application,
             expires=expires,
-            scope='read write',  # Define the scope based on your requirement
-            source_refresh_token=None
+            scope='read write',
+            source_refresh_token=source_refresh_token
         )
 
-        # Create the refresh token
+    def create_refresh_token(self,
+            refresh_token_dto: RefreshTokenDTO):
+        token = refresh_token_dto.token
+        user_id = refresh_token_dto.user_id
+        application_name = refresh_token_dto.application_name
+        access_token = refresh_token_dto.access_token
+
+        application = self.get_application_instance(application_name=application_name)
         refresh_token = RefreshToken.objects.create(
-            user_id=user.user_id,
-            token=refresh_token_str,
+            user_id=user_id,
+            token=token,
             application=application,
             access_token=access_token
         )
 
-
-
-        login_dto = LoginDTO(
-            access_token=access_token_str,
-            expires_in=expires,
-            token_type="Bearer",
-            scope="read write",
-            refresh_token=refresh_token_str
-        )
-
-        return login_dto
 
     def get_orders_for_user(self, user_id: str) -> List[OrderDTO]:
 

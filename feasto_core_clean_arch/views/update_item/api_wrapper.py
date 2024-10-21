@@ -1,7 +1,10 @@
 from django.http import JsonResponse, HttpResponse
 from django_swagger_utils.drf_server.utils.decorator.interface_decorator \
     import validate_decorator
+
+from feasto_core.views.update_item.update_item import update_item
 from .validator_class import ValidatorClass
+from ...interactors.storage_interfaces.storage_interface import UpdateItemDTO
 from ...interactors.update_item_interactor import UpdateItemInteractor
 from ...models import Restaurant
 from ...models import Item
@@ -22,33 +25,12 @@ def api_wrapper(*args, **kwargs):
     storage = StorageImplementation()
     presenter = PresenterImplementation()
     interactor = UpdateItemInteractor(storage=storage)
+    update_item_dto = UpdateItemDTO(
+        name=name,
+        available_quantity=available_quantity,
+        item_id=item_id,
+        restaurant_id=restaurant_id,
+        user_id=user_id
+        )
+    return interactor.update_item(update_item_dto=update_item_dto, presenter=presenter)
 
-    return interactor.update_item(user_id=user_id, presenter=presenter, restaurant_id=restaurant_id, item_id=item_id, name=name, available_quantity=available_quantity)
-
-    # return JsonResponse(data=updated_item, status=200)
-
-    # check = Restaurant.objects.get(id=restaurant_id).user_id ==str(user_id)
-    #
-    # if check:
-    #     updatated_item = Item.objects.get(id=item_id)
-    #
-    #     if name:
-    #         updatated_item.name = name
-    #
-    #     if available_quantity:
-    #         updatated_item.available_quantity = available_quantity
-    #
-    #     updatated_item.save()
-    #
-    #     response_data = {
-    #         "item": {
-    #             "name": updatated_item.name,
-    #             "available_quantity": updatated_item.available_quantity,
-    #             "restaurant_id": updatated_item.restaurant_id,
-    #             "id": updatated_item.id
-    #         }
-    #     }
-    #
-    #     return JsonResponse(data=response_data, status=200)
-    #
-    # return JsonResponse(data={f'Invalid request,restaurant_id: {restaurant_id} is does not exists'}, status=400)

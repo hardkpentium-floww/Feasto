@@ -15,16 +15,14 @@ class AddItemInteractor:
                  name: str = None,
                  available_quantity: int = None,
                  ) :
-        try:
-            self.storage.validate_restaurant_owner(user_id=user_id, restaurant_id= restaurant_id)
-        except InvalidRestaurantOwnerId:
-            presenter.error_response_for_invalid_restaurant_owner()
-            return
 
+        restaurant_owner_id = self.storage.get_restaurant(restaurant_id=restaurant_id).id
+        if restaurant_owner_id != user_id:
+            raise InvalidRestaurantOwnerId
         try:
             self.storage.validate_restaurant_id(restaurant_id=restaurant_id)
         except InvalidRestaurantId:
-            presenter.error_response_for_restaurant_not_found()
+            presenter.get_error_response_for_restaurant_not_found()
             return
 
         item_dto = self.storage.add_item(

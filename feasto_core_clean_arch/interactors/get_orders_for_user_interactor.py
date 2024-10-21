@@ -12,8 +12,8 @@ class GetOrdersForUserInteractor:
                  presenter: PresenterImplementation,
                  ) :
 
-        orders_dto = self.storage.get_orders_for_user(
+        order_dtos = self.storage.get_orders_for_user(
             user_id= user_id
         )
 
-        return presenter.get_response_for_get_orders_for_user(orders_dto=orders_dto)
+        return presenter.get_response_for_get_orders_for_user(orders_dto=order_dtos)

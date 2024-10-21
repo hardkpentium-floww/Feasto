@@ -1,6 +1,6 @@
 from enum import Enum
 
 
-class StatusType(Enum):
+class RestaurantStatus(Enum):
     AVAILABLE = "AVAILABLE"
     UNAVAILABLE = "UNAVAILABLE"

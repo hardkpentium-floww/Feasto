@@ -1,16 +1,16 @@
 from typing import List
 
 from feasto_core_clean_arch.constants.exception_messages import RESTAURANT_NOT_FOUND, INVALID_USER, ITEM_NOT_FOUND, \
-    INVALID_OWNER
+    NOT_RESTAURANT_OWNER
 from feasto_core_clean_arch.interactors.presenter_interfaces.presenter_interface import PresenterInterface
 from feasto_core_clean_arch.interactors.storage_interfaces.storage_interface import ItemDTO, RestaurantDTO, OrderDTO, \
-    UserDTO, OrderItemDTO, LoginDTO
+    UserDTO, OrderItemDTO, AuthenticationTokensDTO
 from django.http import JsonResponse, HttpResponse
 
 
 class PresenterImplementation(PresenterInterface):
 
-    def error_response_for_invalid_user(self):
+    def get_error_response_for_invalid_user(self, user_id:str):
         status, response = INVALID_USER
         data = {
             "status_code" : 401,
@@ -20,7 +20,7 @@ class PresenterImplementation(PresenterInterface):
 
         return JsonResponse(data=data, status=status)
 
-    def error_response_for_restaurant_not_found(self):
+    def get_error_response_for_restaurant_not_found(self, restaurant_id:int):
         status, response = RESTAURANT_NOT_FOUND
         data = {
             "status_code": 401,
@@ -30,7 +30,7 @@ class PresenterImplementation(PresenterInterface):
 
         return JsonResponse(data=data, status=status)
 
-    def error_response_for_item_not_found(self):
+    def get_error_response_for_item_not_found(self, item_id:int):
         status, response = ITEM_NOT_FOUND
         data = {
             "status_code": 401,
@@ -40,8 +40,8 @@ class PresenterImplementation(PresenterInterface):
 
         return JsonResponse(data=data, status=status)
 
-    def error_response_for_invalid_restaurant_owner(self):
-        status, response = INVALID_OWNER
+    def get_error_response_for_invalid_restaurant_owner(self, user_id:str):
+        status, response = NOT_RESTAURANT_OWNER
         data = {
             "status_code": 401,
             "res_status": status,
@@ -133,7 +133,7 @@ class PresenterImplementation(PresenterInterface):
 
         return JsonResponse(data=data, status=200)
 
-    def get_response_for_login(self, login_dto: LoginDTO):
+    def get_response_for_login(self, login_dto: AuthenticationTokensDTO):
         data = {
             "response" : self._get_login_dict(login_dto)
         }
@@ -189,7 +189,7 @@ class PresenterImplementation(PresenterInterface):
             "items": self._get_order_items_dict(order_dto.items)
         }
 
-    def _get_login_dict(self, login_dto: LoginDTO):
+    def _get_login_dict(self, login_dto: AuthenticationTokensDTO):
         return {
               "access_token": login_dto.access_token,
               "expires_in": login_dto.expires_in,
