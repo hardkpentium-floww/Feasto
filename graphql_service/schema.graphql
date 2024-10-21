@@ -1,0 +1,58 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+union AuthorBooksResponse = AuthorBooks | AuthorNotFound
+
+union PublishBookResponse = Book | AuthorNotFound | BookIsAlreadyPublished
+
+type Author {
+  id: String!
+  name: String!
+  email: String
+  age: Int!
+}
+
+type AuthorBooks {
+  books: [Book!]!
+  totalCount: Int!
+}
+
+type AuthorNotFound {
+  invalidAuthorId: String!
+}
+
+type Book {
+  id: String!
+  name: String!
+  author: Author!
+  publishedOn: String!
+}
+
+type BookIsAlreadyPublished {
+  bookName: String!
+}
+
+input AuthorBooksParams {
+  authorId: String!
+  pagination: Pagination!
+}
+
+input Pagination {
+  offset: Int!
+  limit: Int!
+}
+
+input PublishBookParams {
+  name: String!
+  authorId: String!
+}
+
+type Query {
+  getAuthorBooks(params: AuthorBooksParams!): AuthorBooksResponse!
+}
+
+type Mutation {
+  publishBook(params: PublishBookParams!): PublishBookResponse!
+}
