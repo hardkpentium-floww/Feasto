@@ -1,7 +1,4 @@
 from feasto_core_clean_arch.models import Order, OrderItem
-from feasto_gql.restaurant.dataloaders.order_items_loader import OrderItemsLoader
-from feasto_gql.restaurant.dataloaders.orders_for_users_loader import AllOrdersForAllUsersLoader
-from graphql_service.crm_graphene import context
 
 
 def resolve_get_all_orders_for_all_users(root, info):
