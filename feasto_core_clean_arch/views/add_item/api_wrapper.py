@@ -20,7 +20,7 @@ def api_wrapper(*args, **kwargs):
     interactor = AddItemInRestaurantMenuInteractor(storage=storage)
 
     # rest = Restaurant.objects.get(id = restaurant_id)
-    item_response = interactor.add_item_wrapper(restaurant_id = restaurant_id,user_id= user_id, name= name, available_quantity=available_quantity, presenter=presenter)
+    item_response = interactor.add_restaurant_wrapper(restaurant_id = restaurant_id,user_id= user_id, name= name, available_quantity=available_quantity, presenter=presenter)
     # check = rest.user_id == str(user_id)
 
 

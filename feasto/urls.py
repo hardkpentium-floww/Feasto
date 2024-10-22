@@ -18,12 +18,8 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
-import os
-
-from oauthlib.uri_validate import scheme
 
 from graphql_service.graphql_views_dev import GraphQLViewDev
-from graphql_service.views import GraphQLView
 
 api = []
 
@@ -48,7 +44,7 @@ urlpatterns += [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 
-from feasto_gql.schema import schema
+from feasto_gql.dummy.schema import schema
 urlpatterns += [
    url(r"^graphql", GraphQLViewDev.as_view(schema=schema), name="graphql"),
 ]

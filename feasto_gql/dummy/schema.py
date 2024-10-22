@@ -1,9 +1,7 @@
 import graphene
-from httplib2.auth import params
 
-from feasto_gql.dummy import PublishBook, AuthorBooksResponse, AuthorBooksParams, GetBookResponse, GetBookParams, \
-    AddAuthor, GetAuthorsResponse, Author, DeleteAuthor
-from graphql_service.custom_scalars import GQLRequiredList
+from feasto_gql.dummy.dummy import PublishBook, AuthorBooksResponse, AuthorBooksParams, GetBookResponse, GetBookParams, \
+    AddAuthor, Author, DeleteAuthor
 from feasto_core_clean_arch.models import User
 
 

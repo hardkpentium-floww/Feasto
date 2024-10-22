@@ -12,12 +12,11 @@ class AddItemInRestaurantMenuInteractor:
     def add_restaurant_wrapper(self, presenter: PresenterImplementation,
                        add_restaurant_dto: AddRestaurantDTO):
 
-        try:
-            restaurant_dto = self.add_restaurant(add_restaurant_dto)
-        except Exception as e:
-            pass
 
-        return presenter.get_response_for_add_restaurant(restaurant_dto=restaurant_dto)
+        restaurant_dto = self.add_restaurant(add_restaurant_dto)
+
+
+        return restaurant_dto
 
 
 

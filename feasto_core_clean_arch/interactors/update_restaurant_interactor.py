@@ -15,13 +15,9 @@ class UpdateRestaurantInteractor:
                           presenter: PresenterInterface
                           ):
 
-        try:
-            restaurant_dto= self.update_restaurant(update_restaurant_dto=update_restaurant_dto)
+        restaurant_dto= self.update_restaurant(update_restaurant_dto=update_restaurant_dto)
 
-        except InvalidRestaurantId:
-            return presenter.get_error_response_for_restaurant_not_found()
-
-        return presenter.get_response_for_update_restaurant(restaurant_dto= restaurant_dto)
+        return restaurant_dto
 
     def update_restaurant(self,
                           update_restaurant_dto: UpdateRestaurantDTO,

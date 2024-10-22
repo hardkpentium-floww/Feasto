@@ -137,7 +137,7 @@ class StorageInterface:
 
     @abstractmethod
     def delete_restaurant(self,
-                          restaurant_id: int, user_id: int):
+                          restaurant_id: int, user_id: str) -> RestaurantDTO:
         pass
 
     @abstractmethod

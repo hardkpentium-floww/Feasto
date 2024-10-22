@@ -17,7 +17,7 @@ class GetRestaurantsInteractor:
             get_restaurant_dto=get_restaurant_dto
         )
 
-        return presenter.get_response_for_get_restaurants(restaurants_dto=restaurants_dto)
+        return restaurants_dto
 
     def get_restaurants(self,
                  get_restaurant_dto: GetRestaurantDTO

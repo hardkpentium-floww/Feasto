@@ -20,7 +20,7 @@ class GraphQLBaseTestCase:
         variables: Dict,
         snapshot: PyTestSnapshotTest,
     ):
-        from feasto_gql.schema import execute_schema
+        from feasto_gql.dummy.schema import execute_schema
 
         result = execute_schema(
             query,

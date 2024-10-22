@@ -171,13 +171,20 @@ class StorageImplementation(StorageInterface):
         return restaurant_data
 
     def delete_restaurant(self,
-                          restaurant_id: int, user_id: int):
+                          restaurant_id: int, user_id: str) -> RestaurantDTO:
         rest = Restaurant.objects.get(id=restaurant_id)
 
         if rest.user_id == user_id:
             rest.delete()
+        rest_dto = RestaurantDTO(
+            id= rest.id,
+            name= rest.name,
+            user= self.get_user(user_id),
+            location= rest.location,
+            status= rest.status
+        )
 
-        return
+        return rest_dto
 
 
 

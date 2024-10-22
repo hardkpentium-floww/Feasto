@@ -10,10 +10,8 @@ class DeleteRestaurantInteractor:
         self.storage = storage
 
     def delete_restaurant_wrapper(self, user_id: int, presenter: PresenterInterface, restaurant_id: int):
-        try:
-            self.delete_restaurant(restaurant_id=restaurant_id, user_id=user_id)
-        except InvalidRestaurantId:
-            return presenter.get_error_response_for_restaurant_not_found()
+
+        self.delete_restaurant(restaurant_id=restaurant_id, user_id=user_id)
 
 
     def delete_restaurant(self,
