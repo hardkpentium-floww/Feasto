@@ -7,7 +7,7 @@ from feasto_core_clean_arch.storages.storage_implementation import StorageImplem
 from feasto_gql.restaurant.types.types import Restaurant, RestaurantNotFound, GetRestaurantsParams
 from feasto_core_clean_arch.models import Restaurant as RestaurantModel
 
-def resolve_get_restaurants(self, info):
+def resolve_get_restaurants(self, info,params):
     # Fetch all restaurants
     class Arguments:
         params = GetRestaurantsParams(required=True)
@@ -17,10 +17,10 @@ def resolve_get_restaurants(self, info):
     interactor = GetRestaurantsInteractor(storage=storage)
 
     get_restaurant_dto = GetRestaurantDTO(
-        status=self.params.status,
-        location=self.params.location,
-        offset=self.params.offset,
-        limit=self.params.limit
+        status=params.status,
+        location=params.location,
+        offset=params.offset,
+        limit=params.limit
     )
     try:
         restaurants_dto =  interactor.get_restaurants_wrapper(get_restaurant_dto=get_restaurant_dto, presenter= presenter)

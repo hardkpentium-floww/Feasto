@@ -1,0 +1,34 @@
+name: Build on PR
+
+on:
+  pull_request:
+    branches:
+      -'**'
+
+env:
+  CI: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+          npm install apidoc
+          pip install virtualenv virtualenvwrapper
+          mkvirtualenv _ib_env
+          pip install -r requirements.txt
+          pip install -r requirements_deploy.txt
+          DJANGO_SETTINGS_MODULE=feasto.settings.local python manage.py build -adj
+          DJANGO_SETTINGS_MODULE=feasto.settings.local python manage.py mocktests
+          
